@@ -20,10 +20,10 @@ function Notice() {
       <ul className={"ulist"}>
         <li> <p>More words are being added currently, as development continues.</p></li>
         <li> <p>Support for real time sign language detection over the web is also being worked on. </p></li>
-        <li> <p>Our Alpha-2 computer vision algorithm has achieved near perfect accuracy for the sign alphabet on our testing data. </p></li>
+        <li> <p>The Alpha-2 computer vision algorithm has achieved near perfect accuracy for the sign alphabet on the testing data. </p></li>
       </ul>
 
-      <Button onClick={navigateHome} type="primary" size={"large"}>Click here to start Learning... 	&#10145;</Button>
+      <Button onClick={navigateHome} type="primary" size={"large"}>Click<b> here </b>to start Learning... 	&#10145;</Button>
 
       <iframe className={"video-frame"} src="https://www.youtube.com/embed/s271vcQwJRc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>

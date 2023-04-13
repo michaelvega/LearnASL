@@ -1,0 +1,7 @@
+.textWrapperHorizontalNotFound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top:35vh !important;
+  margin-bottom: 4rem;
+}

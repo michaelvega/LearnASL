@@ -31,7 +31,7 @@ function App() {
   };
 
   const navigatePractice = () => {
-    navigate('/practice/1');  // TODO -> Change to anything else
+    navigate('/practice/1');
   };
 
   const navigateSettings = () => {

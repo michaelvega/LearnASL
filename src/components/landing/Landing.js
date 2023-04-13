@@ -23,7 +23,7 @@ function Landing() {
     <div className={"textWrapperHorizontalLanding"}>
       <div className={"titleSection"}>
         <h1 className="title"><center><b>Learn American Sign Language &#9995; </b></center></h1>
-        <Button onClick={navigateHome} type="primary" size={"large"}>Click here to start Learning... 	&#10145;</Button>
+        <Button onClick={navigateHome} type="primary" size={"large"}>Click<b> here </b>to start Learning... 	&#10145;</Button>
 
       </div>
       <p style={{margin: "1rem"}}>LearnASL.org gamifies the american sign language learning process, by giving helpful tutorials and real-time feedback.</p>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import "./SentenceBuilder.css"
 import 'bootstrap/dist/css/bootstrap.css';
 import {useParams, useNavigate} from "react-router-dom";
@@ -37,22 +37,22 @@ function SentenceBuilder() {
     };
 
     return (
-      <div className={"textWrapperHorizontalLearn"}>
-        <h1 style={{fontSize: "10em"}}>{singleLetter}</h1>
-        <div className="sentence">{title}</div>
-
-        <div className={"contentArea"}>
-
-          <article ><center>{instructions}</center></article>
-          <img src={image1} alt={"The ASL sign for " + title}></img>
-          <img src={image2} alt={"The ASL sign for " + title}></img>
-        </div>
-
+      <div className={"sentenceBuilderWrapper"}>
         <div className={"btnArea"}>
-          <button type="button" className="btn btn-link" onClick={navigateBackward}><LeftCircleFilled style={{ fontSize: '3em', color: 'dimgray' }} /></button>
-          <button type="button" className="btn btn-link" onClick={navigateForward}><RightCircleFilled style={{ fontSize: '3em', color: 'dimgray' }} /></button>
+          <button type="button" className="btn btn-link" onClick={navigateBackward}><p>Previous</p><LeftCircleFilled style={{ fontSize: '3em', color: 'dimgray' }} /></button>
+          <button type="button" className="btn btn-link" onClick={navigateForward}><p>Next</p><RightCircleFilled style={{ fontSize: '3em', color: 'dimgray' }} /></button>
         </div>
+        <div className={"textWrapperHorizontalLearn"}>
+          <h1 style={{fontSize: "10em"}}>{singleLetter}</h1>
+          <div className="sentence">{title}</div>
 
+          <div className={"contentArea"}>
+
+            <article ><center>{instructions}</center></article>
+            <img src={image1} alt={"The ASL sign for " + title}></img>
+            <img src={image2} alt={"The ASL sign for " + title}></img>
+          </div>
+        </div>
       </div>
     );
 
