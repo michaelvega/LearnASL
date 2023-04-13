@@ -1,6 +1,7 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 import "./Notice.css"
+import {Link} from "react-router-dom";
 
 
 function Notice() {
@@ -17,7 +18,7 @@ function Notice() {
         <li> <p>Our Alpha-2 computer vision algorithm has achieved near perfect accuracy for the sign alphabet on our testing data. </p></li>
       </ul>
 
-      <a href="/home"> <h3>Click here to start learning... </h3> </a>
+      <Link to="/home"> <h3>Click here to start learning... </h3> </Link>
     </div>
   );
 }

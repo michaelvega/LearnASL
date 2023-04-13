@@ -1,7 +1,19 @@
-.textWrapperHorizontal {
+.textWrapperHorizontalLanding {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 4rem;
   margin-bottom: 4rem;
+  /*gap: 2rem;*/
+}
+
+.titleSection {
+  gap:0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  margin: 0.5rem;
 }
