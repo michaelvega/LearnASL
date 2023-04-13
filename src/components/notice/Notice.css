@@ -4,4 +4,21 @@
   align-items: center;
   margin-top: 10vh !important;
   margin-bottom: 4rem;
+  gap:1rem;
+}
+
+.ulist {
+  margin: 0;
+}
+
+.video-frame {
+  width: 560px;
+  height: 315px;
+}
+
+@media only screen and (max-width: 767px) {
+  .video-frame {
+    width: 280px;
+    height: 158px;
+  }
 }
