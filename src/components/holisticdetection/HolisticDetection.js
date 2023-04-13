@@ -1,0 +1,16 @@
+import { FaceMesh } from "@mediapipe/face_mesh";
+import React, { useRef, useEffect, useState } from "react";
+import * as Facemesh from "@mediapipe/face_mesh";
+import * as cam from "@mediapipe/camera_utils";
+import Webcam from "react-webcam";
+
+
+function HolisticDetection() {
+  return (
+    <div style={{ width: "100%" }}>
+      <img src="https://lh3.googleusercontent.com/gS68dawylMg616K3G2kl_6SuB5xRc8rkmgHWgZzt0XhhQIjVBp2bLBytmSFU5cM7m6cGCYs6Hxrwk2-861aiKWjoaqso7JXj5rn12rxAkbHccIG3ICBrBNnqdIddr4EWQouOU-GEsget_FBmwc4NGrmVoWYEcNxR75gwNAy9MotVvnfBwlysXvapQtlnuwlyt00oDbCO-qL8YBUO8eWpSyjF_7MsBwbLPa-b7BoDj7DtpU8wZjIV4x9cSExsJ9bSbrVLJTLM0Il54af_bgJplM_Tqg6zoNw5XLftEJmECrzgUxcKivd18YhYF0Da5a0j7B8_0VZwpsNTXKTpkjGitQHOupdhtzUCYs3q9fdaYZ0qWdCaJaMkQ2P84-nXmjYL0if6LSbsyMncgjagWHcAMwMYHvmIt_-bDC7hbWcsPxZH3ErPQIm1DWv6PR4RbsKEONmMSFf2ReFqz6ZUQubF8_B5gRJeITC5_KUK7VlZxJmcIe2iyUJ4CIMjOhdziWiVu8lqcGbI30BvOMn4_mBPbjj0yl5MrToQnExNw3r9taRv_vxqMo2oju2KJ6BRA5yeMC_LLz4I7TI_Z6N0RUlmfM5czXzW5ufmmwSmZZfiiHV30FZodAoqpJKBFTTDDtQEPFEklYSTnAmPNiFzr47R71q5pga7pQzQ2XIPzb-xRiAIERbyWO7jKRsNxEkxdTtmuNm1aKPbHAzl8qzxtiioPb-E8jaifcjcaUYvt48_DggIQmHZ9nAnj-YWtQtMssT2heEmBEQezQ3hX97vc8zH4XnJAJ2qEKHLhSKqHVXvL6tQv64FQjGIrSZb-16kBd5yBM-nRvpLTUznzG1nI3vtNIn4MfsFHG5W7ZRIdBddFZkbv5s4TI5SpvQePXQspnVOikZf4M6dC39kxdEENUsY6klqBRNlWyRZOf9ZN0jDJY534Smg0iqIOQ7sEpeWm00vGINZC2Pv0bLpcH9470aTfoVg9ItP4H_eUFoXnmHJBCfT6ST9wMHsK4jjwXJZQOYXFoglF9z5agIcfUgf7xvlm9AAJ2eXTAinAONWNXZE6kf_pt-st7IRJ2QTmDnKZV9cJiClGq4LIu8MDkOkEiMIFywXESzaTd-K_FKDCOKnCve2oclBLEURmeeDw-3XLkobfG3vSkaSHgmAAlfwzw7WLchMJCcu=w300-h300-s-no"/>
+    </div>
+  );
+}
+
+export default HolisticDetection;

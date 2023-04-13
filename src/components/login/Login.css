@@ -1,0 +1,28 @@
+.container {
+  display: flex; /* Use flexbox to create columns */
+  flex-wrap: nowrap; /* Prevent columns from wrapping */
+  padding: 0;
+  margin: 0;
+  gap:1rem;
+}
+
+.formWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.formWrapper2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loginTextWrapperHorizontal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20vh;
+  margin-bottom: 4rem;
+}

@@ -34,25 +34,3 @@
   background-color: #0080ff;
   color: white;
 }
-
-
-.bottomnav button {
-  float: left;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 1rem;
-}
-
-/* Change the color of links on hover */
-.bottomnav button:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-/* Add a color to the active/current link */
-.bottomnav button.active {
-  background-color: #0080ff;
-  color: white;
-}
