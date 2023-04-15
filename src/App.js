@@ -5,17 +5,39 @@ import Home from "./components/home/Home";
 
 import { Routes, Route, useNavigate } from "react-router-dom";
 import {ExperimentFilled, HomeFilled, SettingFilled, SmileFilled, BookFilled} from "@ant-design/icons";
-import React from "react";
+import React, {useEffect} from "react";
 import "./App.css"
 import Landing from "./components/landing/Landing";
 import 'bootstrap/dist/css/bootstrap.css';
 import HolisticDetection from "./components/holisticdetection/HolisticDetection";
 import NotFound from "./components/notfound/NotFound";
 import Notice from "./components/notice/Notice";
+import wordList from "./components/wordlist/WordList";
 
 
 
 function App() {
+  const items = wordList;
+
+  //generate local storage keys for every word to save progress
+  useEffect(() => {
+    // Check if localStorage has been set for each item
+    const hasVisited = localStorage.getItem('hasVisited'); //no need to regen if visited already
+
+    if (!hasVisited) {
+      items.forEach(item => {
+        const localStorageData = localStorage.getItem(item.id);
+        if (!localStorageData) {
+          // If not, set localStorage for the item to 'notstarted'
+          localStorage.setItem(item.id, 'notstarted'); //or completed in SentenceBuilder
+        }
+      });
+
+      localStorage.setItem("current", "1"); //default current practice to 1, a
+      localStorage.setItem('hasVisited', 'true');
+    }
+  }, []);
+
   const navigate = useNavigate();
 
   const navigateHome = () => {
@@ -31,7 +53,14 @@ function App() {
   };
 
   const navigatePractice = () => {
-    navigate('/practice/1');
+    const current = localStorage.getItem("current");
+    if (current) {
+      const newURL = `/practice/${String(current)}`
+      navigate(newURL);
+    }
+    else {
+      navigate('/practice/1'); // default current practice to 1, a
+    }
   };
 
   const navigateSettings = () => {

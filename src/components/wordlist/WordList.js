@@ -57,7 +57,7 @@ const WordList =
     {
       id: 1,
       title: "The Letter A",
-      description: "A' as in apple",
+      description: "A as in apple",
       singleLetter: "a",
       instructions: "Start by making a fist with your dominant hand. Extend your thumb out to the side of your hand. Keep your index, middle, ring, and pinky fingers curled into your palm. This hand shape represents the letter 'a' in ASL.",
       image1: a1,
@@ -66,7 +66,7 @@ const WordList =
     {
       id: 2,
       title: "The Letter B",
-      description: "B' as in banana",
+      description: "B as in banana",
       singleLetter: "b",
       instructions: "Start by extending your dominant hand with your fingers and thumb spread apart. Put your four fingers together.  Rest your thumb against the palm of your hand. This hand shape represents the letter 'b' in ASL.",
       image1: b1,
@@ -75,7 +75,7 @@ const WordList =
     {
       id: 3,
       title: "The Letter C",
-      description: "C' as in cat",
+      description: "C as in cat",
       singleLetter: "c",
       instructions: "Start by curling your four fingers and thumb into a circular shape. Leave a little space between the thumb and index finger. Remember that the pinky faces outwards. This hand shape represents the letter 'c' in ASL.",
       image1: c1,
@@ -84,7 +84,7 @@ const WordList =
     {
       id: 4,
       title: "The Letter D",
-      description: "D' as in dog",
+      description: "D as in dog",
       singleLetter: "d",
       instructions: "Start by curling your four fingers and thumb into a circular shape. Extend your index finger directly upwards, away from the others. Make sure to keep your middle finger and thumb touching. This hand shape represents the letter 'd' in ASL.",
       image1: d1,
@@ -93,7 +93,7 @@ const WordList =
     {
       id: 5,
       title: "The Letter E",
-      description: "E' as in elephant",
+      description: "E as in elephant",
       singleLetter: "e",
       instructions: "Start by extending all fingers outwards into a flat hand. Have the tip of each finger, and thumb, touch the palm. Remember to keep the four fingers together. This hand shape represents the letter 'e' in ASL.",
       image1: e1,
@@ -102,7 +102,7 @@ const WordList =
     {
       id: 6,
       title: "The Letter F",
-      description: "F' as in fox",
+      description: "F as in fox",
       singleLetter: "f",
       instructions: "Make an \"okay\" sign. Alternatively, start by making a circular shape with your index finger and thumb touching. Extend middle, ring, and pinky upwards and keep them seperated from each other. Remember to have the circular shape face your audience, or away from you. This hand shape represents the letter 'f' in ASL.",
       image1: f1,
@@ -111,7 +111,7 @@ const WordList =
     {
       id: 7,
       title: "The Letter G",
-      description: "G' as in goat",
+      description: "G as in goat",
       singleLetter: "g",
       instructions: "Start by using your index finger to point at something whilst making a closed fist. Extend your thumb so it is parallel with your index finger. Point both the index finger and thumb to the side or your non-dominant hand, or laterally. Remember to keep every other finger closed. This hand shape represents the letter 'g' in ASL.",
       image1: g1,
@@ -120,7 +120,7 @@ const WordList =
     {
       id: 8,
       title: "The Letter H",
-      description: "H' as in hat",
+      description: "H as in hat",
       singleLetter: "h",
       instructions: "Start by using your index finger and middle finger, together, to point at something whilst making a closed fist. Point both the index and middle fingers to the side or your non-dominant hand, or laterally. Remember to keep every other finger closed. This hand shape represents the letter 'h' in ASL.",
       image1: h1,
@@ -129,7 +129,7 @@ const WordList =
     {
       id: 9,
       title: "The Letter I",
-      description: "I' as in igloo",
+      description: "I as in igloo",
       singleLetter: "i",
       instructions: "Start by making a fist with your palm facing outwards, away from you. Raise your pinky finger directly upwards whilst keeping all other fingers closed. This hand shape represents the letter 'i' in ASL.",
       image1: i1,
@@ -138,7 +138,7 @@ const WordList =
     {
       id: 10,
       title: "The Letter J",
-      description: "J' as in jellyfish",
+      description: "J as in jellyfish",
       singleLetter: "j",
       instructions: "Start by making a fist with your palm facing inwards, towards you. Raise your pinky finger directly upwards whilst keeping all other fingers closed. Move your hand and finger in the hooked motion of a letter J. This hand shape represents the letter 'j' in ASL.",
       image1: j1,
@@ -147,7 +147,7 @@ const WordList =
     {
       id: 11,
       title: "The Letter K",
-      description: "K' as in kangaroo",
+      description: "K as in kangaroo",
       singleLetter: "k",
       instructions: "Start by making a fist with your palm facing outwards, away from you. Raise your index and middle fingers directly upwards, whilst keep all other fingers closed. Move your middle finger forward and your index finger backward. Remember to keep these fingers in horizontal alignment and not move them side to side. Place your thumb on the middle joint of your middle finger. You may need to show it slightly off center, or to the side, to increase visibility. This hand shape represents the letter 'k' in ASL.",
       image1: k1,
@@ -156,7 +156,7 @@ const WordList =
     {
       id: 12,
       title: "The Letter L",
-      description: "L' as in lion",
+      description: "L as in lion",
       singleLetter: "l",
       instructions: "Make an \"L\" sign. Alternatively, make a fist with your index finger extended directly upwards and thumb extended sideways. These should form an orthogonal angle. Remember to keep all other fingers closed. This hand shape represents the letter 'L' in ASL.",
       image1: l1,
@@ -165,7 +165,7 @@ const WordList =
     {
       id: 13,
       title: "The Letter M",
-      description: "M' as in monkey",
+      description: "M as in monkey",
       singleLetter: "m",
       instructions: "Start with a flat hand. Close only your pinky finger. Have your thumb extend over your palm and touch the pinky knuckle. Close your ring, middle, and index fingers. This shape should resemble a fist with your thumb sticking out between your pinky and ring fingers. This hand shape represents the letter 'm' in ASL.",
       image1: m1,
@@ -174,7 +174,7 @@ const WordList =
     {
       id: 14,
       title: "The Letter N",
-      description: "N' as in nest",
+      description: "N as in nest",
       singleLetter: "n",
       instructions: "Start with a flat hand. Close your pinky and ring fingers. Have your thumb extend over your palm and touch the ring finger knuckle. Close your middle and index fingers. This shape should resemble a fist with your thumb sticking out between your ring and middle fingers. This hand shape represents the letter 'n' in ASL.",
       image1: n1,
@@ -183,7 +183,7 @@ const WordList =
     {
       id: 15,
       title: "The Letter O",
-      description: "O' as in octopus",
+      description: "O as in octopus",
       singleLetter: "o",
       instructions: "Start by making a circular shape with your four fingers and thumb. Remember to touch the tip of your middle finger with the tip of your thumb. Make sure the circular figure faces your audience, away from you. This hand shape represents the letter 'o' in ASL.",
       image1: o1,
@@ -192,7 +192,7 @@ const WordList =
     {
       id: 16,
       title: "The Letter P",
-      description: "P' as in panda",
+      description: "P as in panda",
       singleLetter: "p",
       instructions: "Make an upside down 'k' with the back of your hand facing away from you. Alternatively, start by making a fist with your palm facing outwards, away from you. Raise your index and middle fingers directly upwards, whilst keep all other fingers closed. Move your middle finger forward and your index finger backward. Remember to keep these fingers in horizontal alignment and not move them side to side. Place your thumb on the middle joint of your middle finger. Rotate your hand forward, keeping this figure, until it is fully upside down, with the back of your handing facing away from you. You may need to show it slightly off center, or to the side, to increase visibility. This hand shape represents the letter 'p' in ASL.",
       image1: p1,
@@ -201,7 +201,7 @@ const WordList =
     {
       id: 17,
       title: "The Letter Q",
-      description: "Q' as in queen",
+      description: "Q as in queen",
       singleLetter: "q",
       instructions: "Make an upside down 'g' with the back of your hand facing away from you. Start by using your index finger to point at something whilst making a closed fist. Extend your thumb so it is parallel with your index finger. Point both the index finger and thumb directly downward at the floor. Remember to keep every other finger closed. You may need to show it slightly off center, or to the side, to increase visibility. This hand shape represents the letter 'q' in ASL.",
       image1: q1,
@@ -210,7 +210,7 @@ const WordList =
     {
       id: 18,
       title: "The Letter R",
-      description: "R' as in rabbit",
+      description: "R as in rabbit",
       singleLetter: "r",
       instructions: "Start by making a fist with your palm facing outwards, away from you. Raise your index and middle fingers directly upwards, whilst keep all other fingers closed. Cross your index finger over your middle finger. This hand shape represents the letter 'r' in ASL.",
       image1: r1,
@@ -219,7 +219,7 @@ const WordList =
     {
       id: 19,
       title: "The Letter S",
-      description: "S' as in snake",
+      description: "S as in snake",
       singleLetter: "s",
       instructions: "Make a fist with your palm facing outwards, or away from you. This hand shape represents the letter 's' in ASL.",
       image1: s1,
@@ -228,7 +228,7 @@ const WordList =
     {
       id: 20,
       title: "The Letter T",
-      description: "T' as in turtle",
+      description: "T as in turtle",
       singleLetter: "t",
       instructions: "Start with a flat hand. Close your pinky, ring, and middle fingers. Have your thumb extend over your palm and touch the middle finger knuckle. Close your index finger. This shape should resemble a fist with your thumb sticking out between your middle and index fingers. This hand shape represents the letter 't' in ASL.",
       image1: t1,
@@ -237,7 +237,7 @@ const WordList =
     {
       id: 21,
       title: "The Letter U",
-      description: "U' as in umbrella",
+      description: "U as in umbrella",
       singleLetter: "u",
       instructions: "Start by making a fist with your palm facing outwards, away from you. Raise your index and middle fingers directly upwards, whilst keep all other fingers closed. This hand shape represents the letter 'u' in ASL.",
       image1: u1,
@@ -246,7 +246,7 @@ const WordList =
     {
       id: 22,
       title: "The Letter V",
-      description: "V' as in violin",
+      description: "V as in violin",
       singleLetter: "v",
       instructions: "Start by making a fist with your palm facing outwards, away from you. Raise your index and middle fingers directly upwards, whilst keep all other fingers closed. Separate your index and middle fingers away from each other, forming a V shape. This hand shape represents the letter 'v' in ASL.",
       image1: v1,
@@ -255,7 +255,7 @@ const WordList =
     {
       id: 23,
       title: "The Letter W",
-      description: "W' as in whale",
+      description: "W as in whale",
       singleLetter: "w",
       instructions: "Start by making a fist with your palm facing outwards, away from you. Raise your index, middle, and ring fingers directly upwards, whilst keep all other fingers closed. Separate your index, middle, and ring fingers away from each other, forming a 3 shape. This hand shape represents the letter 'w' in ASL.",
       image1: w1,
@@ -264,7 +264,7 @@ const WordList =
     {
       id: 24,
       title: "The Letter X",
-      description: "X' as in xylophone",
+      description: "X as in xylophone",
       singleLetter: "x",
       instructions: "Make a fist with your palm facing outwards, or away from you. Directly extend your index finger upward whilst keep all other fingers closed. Bend the index finger in the shape of a hook. You may need to show it slightly off center, or to the side, to increase visibility. This hand shape represents the letter 'x' in ASL.",
       image1: x1,
@@ -273,7 +273,7 @@ const WordList =
     {
       id: 25,
       title: "The Letter Y",
-      description: "Y' as in yellow",
+      description: "Y as in yellow",
       singleLetter: "y",
       instructions: "Make a fist with your palm facing outwards, or away from you. Directly extend your index finger and thumb outwards, horizontally, to opposite sides whilst keep all other fingers closed. This hand shape represents the letter 'y' in ASL.",
       image1: y1,
@@ -282,7 +282,7 @@ const WordList =
     {
       id: 26,
       title: "The Letter Z",
-      description: "Z' as in zebra",
+      description: "Z as in zebra",
       singleLetter: "z",
       instructions: "Start by using your index finger to point at something whilst making a closed fist. Use your index finger to pretend to draw a Z shape; move your hand and finger in the zigzag motion of the letter Z. This hand shape represents the letter 'z' in ASL.",
       image1: z1,

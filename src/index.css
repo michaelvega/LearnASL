@@ -6,9 +6,31 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f0f0f0;
+  -webkit-overflow-scrolling: touch;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  height: 12px;
+  width: 8px;
+  background: rgba(52, 55, 72, 0);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(166, 166, 166);
+  -webkit-border-radius: 1ex;
+  border-radius: 1ex;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #555;
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(38, 38, 38, 0);
 }

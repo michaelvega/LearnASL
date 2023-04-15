@@ -70,3 +70,9 @@
   margin-bottom: 0;
   color: gray;
 }
+
+.innerBtn {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}

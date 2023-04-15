@@ -16,10 +16,14 @@ function SentenceBuilder() {
 
     const prop = WordList.find((p) => p.id === parseInt(wordID));
     const title = prop.title;
+    const propId = prop.id;
     const singleLetter = prop.singleLetter;
     const instructions = prop.instructions;
     const image1 = prop.image1;
     const image2 = prop.image2;
+
+    localStorage.setItem(String(propId), "completed");
+    localStorage.setItem("current", String(propId));
 
     const navigateForward = () => {
       let newUrl = `/practice/${String(parseInt(wordID) + 1)}`
@@ -39,8 +43,8 @@ function SentenceBuilder() {
     return (
       <div className={"sentenceBuilderWrapper"}>
         <div className={"btnArea"}>
-          <button type="button" className="btn btn-link" onClick={navigateBackward}><p>Previous</p><LeftCircleFilled style={{ fontSize: '3em', color: 'dimgray' }} /></button>
-          <button type="button" className="btn btn-link" onClick={navigateForward}><p>Next</p><RightCircleFilled style={{ fontSize: '3em', color: 'dimgray' }} /></button>
+          <button type="button" className="btn btn-link" onClick={navigateBackward} style={{padding: 0}}><p>Previous</p><LeftCircleFilled style={{ fontSize: '3em', color: 'dimgray' }} /></button>
+          <button type="button" className="btn btn-link" onClick={navigateForward} style={{padding: 0}}><p>Next</p><RightCircleFilled style={{ fontSize: '3em', color: 'dimgray' }} /></button>
         </div>
         <div className={"textWrapperHorizontalLearn"}>
           <h1 style={{fontSize: "10em"}}>{singleLetter}</h1>

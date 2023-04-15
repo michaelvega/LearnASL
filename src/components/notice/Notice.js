@@ -23,7 +23,7 @@ function Notice() {
         <li> <p>The Alpha-2 computer vision algorithm has achieved near perfect accuracy for the sign alphabet on the testing data. </p></li>
       </ul>
 
-      <Button onClick={navigateHome} type="primary" size={"large"}>Click<b> here </b>to start Learning... 	&#10145;</Button>
+      <Button onClick={navigateHome} type="primary" size={"large"} style={{backgroundColor: "#0088ff"}}>Click<b> here </b>to start Learning... 	&#10145;</Button>
 
       <iframe className={"video-frame"} src="https://www.youtube.com/embed/s271vcQwJRc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>

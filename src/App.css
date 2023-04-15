@@ -1,5 +1,5 @@
 .bottomnavWrapper {
-  background-color: #2C3E50;
+  background-color: #0078e0; /* used to be 2C3E50 */
   overflow: hidden;
   position: fixed;
   bottom: 0;
