@@ -20,6 +20,12 @@ function Landing() {
   };
 
   // <Link to="/home"> <h3>Click here to start... </h3> </Link>
+  /*
+  <div style={{zIndex: -1}}>
+        <ParticlesBackground/>
+      </div>
+   */
+
   return (
     <div className={"textWrapperHorizontalLanding"}>
       <div className={"titleSection"}>
