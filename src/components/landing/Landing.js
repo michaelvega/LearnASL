@@ -23,9 +23,9 @@ function Landing() {
   return (
     <div className={"textWrapperHorizontalLanding"}>
       <div className={"titleSection"}>
-        <h1 className="title">
+        <h1 className="titleLanding">
           <center>
-            <b>
+            <>
               <Typewriter onInit={(typewriter) => {
                 typewriter
                   .typeString('Learn how to Communicate')
@@ -41,10 +41,10 @@ function Landing() {
                 delay: 40,
                 deleteSpeed: 20,
               }}/>
-            </b>
+            </>
           </center>
         </h1>
-        <Button onClick={navigateHome} type="primary" size={"large"} style={{backgroundColor: "#0088ff"}}>Click<b> here </b>to start Learning... 	&#10145;</Button>
+        <Button onClick={navigateHome} type="primary" size={"large"} style={{backgroundColor: "#0088ff", boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)"}}>Click<b> here </b>to start Learning... 	&#10145;</Button>
 
       </div>
       <p style={{margin: "1rem"}}>LearnASL.org gamifies the american sign language learning process, by giving helpful tutorials and real-time feedback.</p>
@@ -60,7 +60,7 @@ function Landing() {
           description="Model object recognizes the user-selected word to practice."
         />
         <Card
-          title="Fingerspelling"
+          title="Finger Spelling"
           image={g}
           description="Currently the alphabet is supported, enabling fingerspelling."
         />

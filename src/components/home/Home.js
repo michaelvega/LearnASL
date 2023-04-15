@@ -49,7 +49,7 @@ function Home() {
 
   return(
     <div className="textWrapperHome">
-      <h1 style={{marginBottom: "0.5rem"}}> Learn ASL Signs Below </h1>
+      <h1 style={{marginBottom: "0.5rem", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.25)" }}>Learn ASL Signs Below</h1>
       <Progress
         type="circle"
         percent={percent}
