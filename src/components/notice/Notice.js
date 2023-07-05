@@ -3,10 +3,16 @@ import 'bootstrap/dist/css/bootstrap.css';
 import "./Notice.css"
 import {Link, useNavigate} from "react-router-dom";
 import b from "../landing/imgs/b-capture.png";
+import y from "../landing/imgs/y-capture.png"
+import g from "../landing/imgs/g-capture.png"
+
 import {Button} from "antd";
+import {ArrowRightOutlined} from "@ant-design/icons";
 
 
 function Notice() {
+
+  //       <iframe className={"video-frame"} src="https://www.youtube.com/" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
   const navigate = useNavigate();
 
@@ -25,7 +31,12 @@ function Notice() {
 
       <Button onClick={navigateHome} type="primary" size={"large"} style={{backgroundColor: "#0088ff", boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)"}}>Click<b> here </b>to start Learning... 	&#10145;</Button>
 
-      <iframe className={"video-frame"} src="https://www.youtube.com/embed/s271vcQwJRc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      <div className="conversion">
+        <img src={y} alt={"Letter Y Capture"} className={"letterImgs"}/>
+        <ArrowRightOutlined style={{ fontSize: '36px'}}></ArrowRightOutlined>
+        <img src={g} alt={"Letter B Conversion"} className={"letterImgs"}/>
+      </div>
+
     </div>
   );
 }
