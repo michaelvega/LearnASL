@@ -1,6 +1,5 @@
 import React from 'react';
 import "./NotFound.css"
-import b from "../landing/imgs/b-capture.png";
 import {Button} from "antd";
 import {useNavigate} from "react-router-dom";
 
