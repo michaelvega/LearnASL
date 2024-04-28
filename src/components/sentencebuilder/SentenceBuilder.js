@@ -98,7 +98,7 @@ function SentenceBuilder() {
               <img src={image1} alt={"The ASL sign for " + title}></img>
               <img src={image2} alt={"The ASL sign for " + title}></img>
 
-              <iframe width="640" height="480" src="http://127.0.0.1:5000" frameBorder="0" allow="camera"
+              <iframe width="640" height="480" src="https://learnasl.ue.r.appspot.com" frameBorder="0" allow="camera"
                       allowFullScreen></iframe>
             </div>
           </div>
