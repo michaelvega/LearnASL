@@ -56,13 +56,19 @@
   gap: 1rem;
 }
 
-.btnArea {
+.tutorial-btnArea-wrapper {
   margin-top: 0.5rem;
   display: flex;
   flex-direction: row;
   width: 100%;
   justify-content: center;
-  gap: 50vw;
+}
+
+.tutorial-btnArea {
+  display: flex;
+  flex-direction: row;
+  width: 40%;
+  justify-content: space-between;
 }
 
 

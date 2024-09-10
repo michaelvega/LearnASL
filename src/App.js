@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import Login from "./components/login/Login";
-import SentenceBuilder from "./components/sentencebuilder/SentenceBuilder";
+import Tutorial from "./components/tutorial/Tutorial";
 import Home from "./components/home/Home";
 
 import { Routes, Route, useNavigate } from "react-router-dom";
@@ -9,10 +9,10 @@ import React, {useEffect} from "react";
 import "./App.css"
 import Landing from "./components/landing/Landing";
 import 'bootstrap/dist/css/bootstrap.css';
-import HolisticDetection from "./components/holisticdetection/HolisticDetection";
 import NotFound from "./components/notfound/NotFound";
 import Notice from "./components/notice/Notice";
 import wordList from "./components/wordlist/WordList";
+import Practice from "./components/practice/Practice";
 
 
 
@@ -29,7 +29,7 @@ function App() {
         const localStorageData = localStorage.getItem(item.id);
         if (!localStorageData) {
           // If not, set localStorage for the item to 'notstarted'
-          localStorage.setItem(item.id, 'notstarted'); //or completed in SentenceBuilder
+          localStorage.setItem(item.id, 'notstarted'); //or completed in Tutorial
         }
       });
 
@@ -52,6 +52,17 @@ function App() {
     navigate('/landing');
   };
 
+  const navigateTutorial = () => {
+    const current = localStorage.getItem("current");
+    if (current) {
+      const newURL = `/tutorial/${String(current)}`
+      navigate(newURL);
+    }
+    else {
+      navigate('/tutorial/1'); // default current practice to 1, a
+    }
+  };
+
   const navigatePractice = () => {
     const current = localStorage.getItem("current");
     if (current) {
@@ -59,7 +70,7 @@ function App() {
       navigate(newURL);
     }
     else {
-      navigate('/practice/1'); // default current practice to 1, a
+      navigate('/practice/1'); // default current TUTORIAL to 1, a
     }
   };
 
@@ -74,7 +85,7 @@ function App() {
           <div className="bottomnav">
             <button type="button" className="btn btn-link" onClick={navigateLanding}><HomeFilled /></button>
             <button type="button" className="btn btn-link" onClick={navigateHome}><BookFilled /></button>
-            <button type="button" className="btn btn-link" onClick={navigatePractice}><ExperimentFilled /></button>
+            <button type="button" className="btn btn-link" onClick={navigateTutorial}><ExperimentFilled /></button>
             <button type="button" className="btn btn-link" onClick={navigateSettings}><SettingFilled /></button>
           </div>
         </center>
@@ -84,7 +95,8 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/landing" element={<Landing />} />
         <Route path="/home" element={<Home/>} />
-        <Route path="/practice/:wordID" element={<SentenceBuilder/>}/>
+        <Route path="/tutorial/:wordID" element={<Tutorial/>}/>
+        <Route path="/practice/:wordID" element={<Practice/>}/>
         <Route path="/login" element={<Login />} />
         <Route path="/settings" element={<Notice />} />
         <Route path="/*" element={<NotFound />} />

@@ -8,9 +8,9 @@ function PropsList({ props }) {
     <div className="list">
       {props.map((prop, index) => (
         <div key={index} className="list-item">
-          {localStorage.getItem(String(prop.id)) == "completed" ? <Link to={`/practice/${prop.id}`}><CheckCircleFilled  style={{ color: "green", fontSize: "1.5em" }}/> </Link> : <Link to={`/practice/${prop.id}`}><PlayCircleFilled style={{ color: "#636363", fontSize: "1.5em" }}/> </Link> }
+          {localStorage.getItem(String(prop.id)) == "completed" ? <Link to={`/tutorial/${prop.id}`}><CheckCircleFilled  style={{ color: "green", fontSize: "1.5em" }}/> </Link> : <Link to={`/tutorial/${prop.id}`}><PlayCircleFilled style={{ color: "#636363", fontSize: "1.5em" }}/> </Link> }
           <div className={"titleDescription"} >
-            <Link to={`/practice/${prop.id}`}> <h3 className="title" >{prop.title}</h3></Link>
+            <Link to={`/tutorial/${prop.id}`}> <h3 className="title" >{prop.title}</h3></Link>
             <p style={{ margin: 0 }}>{prop.description}</p>
           </div>
         </div>

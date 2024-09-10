@@ -1,0 +1,93 @@
+.sentence {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.word-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.word {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: background-color 0.2s ease;
+}
+
+.word:hover {
+    background-color: #c0c0c0;
+}
+
+.selected-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    background-color: #e0e0e0;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.selected-word {
+    background-color: #4caf50;
+    border-radius: 4px;
+    color: #fff;
+    padding: 4px 8px;
+}
+
+.textWrapperHorizontalLearn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /*margin-top: 2vh !important;*/
+    margin-bottom: 4rem;
+}
+
+.contentArea {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    align-items: center;
+    gap: 1rem;
+}
+
+.practice-btnArea-wrapper {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+}
+
+.practice-btnArea {
+    display: flex;
+    flex-direction: row;
+    width: 40%;
+    justify-content: space-between;
+
+
+}
+
+.webcam {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+
+
+.filler {
+    margin-bottom: 0;
+    color: gray;
+}
+
+.innerBtn {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}

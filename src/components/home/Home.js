@@ -39,7 +39,7 @@ function Home() {
       const localStorageData = localStorage.getItem(item.id);
       if (localStorageData) {
         // If not, set localStorage for the item to 'notstarted'
-        localStorage.setItem(item.id, 'notstarted'); //or completed in SentenceBuilder
+        localStorage.setItem(item.id, 'notstarted'); //or completed in Tutorial
       }
     });
 
