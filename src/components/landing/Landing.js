@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import "./Landing.css";
 import {Link, useNavigate} from "react-router-dom";
 import Card from "../card/Card";
+import StartLearningBtn from "../startlearningbtn/startlearningbtn";
 import "../card/Card.css";
 import { Button } from 'antd';
 import y from "./imgs/y-capture.png";
@@ -25,10 +26,11 @@ function Landing() {
         <ParticlesBackground/>
       </div>
    */
+  
 
   return (
     <div className={"textWrapperHorizontalLanding"}>
-      <div className={"titleSection"}>
+      <div className={"titleSection"}> 
         <h1 className="titleLanding">
           <center>
             <>
@@ -40,7 +42,7 @@ function Landing() {
                   .typeString(' Sign Different Words')
                   .pauseFor(1000)
                   .deleteChars(21 + 7)
-                  .typeString(' American Sign Language ✋')
+                  .typeString(' American Sign Language with <span class = "inikafont"><strong>LearnASL</strong></span> ✋')
                   .start();
               }} options={{
                 autoStart: true,
@@ -50,10 +52,9 @@ function Landing() {
             </>
           </center>
         </h1>
-        <Button onClick={navigateHome} type="primary" size={"large"} style={{backgroundColor: "#0088ff", boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)"}}>Click<b> here </b>to start Learning... 	&#10145;</Button>
 
       </div>
-      <p style={{margin: "1rem"}}>LearnASL.org gamifies the american sign language learning process, by giving helpful tutorials and real-time feedback.</p>
+      <p style={{margin: ".2rem"}}>LearnASL.org <strong>gamifies the american sign language learning process,</strong> by giving helpful tutorials and real-time feedback.</p>
       <div className="cards-container">
         <Card
           title="Helpful Markers"
@@ -76,6 +77,9 @@ function Landing() {
           description="More features including new words and phrases coming soon..."
         />
       </div>
+      <div className= {"startLearningBtn"}>  {/* Put btn at the bottom, for some reason going over the bottom navbar*/}
+      </div>
+      <StartLearningBtn onClick={navigateHome}/>
     </div>
   );
 }

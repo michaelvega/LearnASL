@@ -18,10 +18,7 @@ function BottomNav() {
     <div className={"bottomnavWrapper"}>
       <center>
         <div className="bottomnav">
-          <a href="index.html"><HomeFilled /></a>
-          <a href="about.html"><ExperimentFilled /></a>
-          <a href="projects.html"><SmileFilled /></a>
-          <a href="blog.html"><SettingFilled /></a>
+         
         </div>
       </center>
     </div>

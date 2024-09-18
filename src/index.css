@@ -6,6 +6,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f0f0f0;
+
   -webkit-overflow-scrolling: touch;
 }
 
@@ -33,4 +34,9 @@ code {
 
 ::-webkit-scrollbar-corner {
   background: rgba(38, 38, 38, 0);
+}
+
+
+html, body { /*added full background edition color */
+  background-color: #FFFAF4; /* Replace with your desired color */
 }

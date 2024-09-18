@@ -1,0 +1,25 @@
+.fullBtn {
+    background-image: url("./imgs/StartLearningBtn.png");
+    background-size: contain; 
+    background-repeat: no-repeat; 
+    background-position: center; 
+    width: 100%; 
+    height: auto; 
+    aspect-ratio: 35; /* You can adjust this to maintain the image aspect ratio */
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    position: relative; 
+}
+
+.fullBtn:hover {
+    cursor: pointer;
+}
+
+.btnText {
+    font-weight: bold; 
+    color: white; 
+    z-index: 1; 
+    position: absolute;
+    margin-bottom: .2rem;
+  }

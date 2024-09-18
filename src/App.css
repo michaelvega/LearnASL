@@ -1,5 +1,7 @@
+
+
 .bottomnavWrapper {
-  background-color: #0078e0; /* used to be 2C3E50 */
+  background-color: #D0D6C5; /* used to be 2C3E50 */
   overflow: hidden;
   position: fixed;
   bottom: 0;
@@ -21,6 +23,7 @@
   padding: 14px 16px;
   text-decoration: none;
   font-size: 1rem;
+
 }
 
 /* Change the color of links on hover */
@@ -38,7 +41,7 @@
 
 .bottomnav button {
   float: left;
-  color: #f2f2f2;
+  color: black;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;

@@ -1,17 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Inika:wght@400;700&display=swap');
+
+
 .textWrapperHorizontalLanding {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 4rem;
   margin-bottom: 4rem;
-  /*gap: 2rem;*/
+  background-color: #FFFAF4;
+  height: auto;  /* Ensure height adjusts to content */
+  width: 100%;   /* Make sure it spans the full width */
+  position: relative;  /* Ensure it respects stacking context */
+  z-index: 1;    /* Set a lower z-index so the text appears above */
+}
+
+
+.inikafont {
+  font-family: 'Inika', serif;
+  font-weight: bold; 
+  color: #000; 
 }
 
 .titleSection {
-  gap:0.5rem;
+  gap: 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative; /* Ensure text is positioned relative to the wrapper */
+  z-index: 2; /* Ensure text is above the background */
 }
 
 .titleLanding {
@@ -19,4 +35,9 @@
   display: flex;
   flex-direction: row;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+  z-index: 2;  /* Text should appear above the background */
 }
+
+
+
+
