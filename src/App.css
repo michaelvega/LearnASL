@@ -43,10 +43,31 @@
   color: black;
 }
 
-/* fix the blue on active later
-.bottomnav button span svg:active {
-  fill: red;
-  color: rebeccapurple;
-  background-color: aquamarine;
+.reactButton {
+  background-color: transparent; /* Transparent background */
+  border: none; /* No border */
+  border-radius: 10px; /* Rounded corners */
+  padding: 10px; /* Add some padding */
+  display: inline-flex; /* Center the icon */
+  justify-content: center; /* Center the icon horizontally */
+  align-items: center; /* Center the icon vertically */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transitions */
 }
-*/
+
+.reactButton:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* Light transparent white background on hover */
+}
+
+.reactButton:active {
+  background-color: transparent; /* Remove background color when active */
+  color: white; /* Turn the icon white when pressed */
+}
+
+.reactButton svg {
+  transition: color 0.3s ease; /* Smooth transition for icon color */
+}
+
+.reactButton:active svg {
+  color: white; /* Change the icon color to white when pressed */
+}

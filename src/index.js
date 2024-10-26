@@ -4,12 +4,26 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {HashRouter} from "react-router-dom";
+import {ConfigProvider} from "antd";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <HashRouter basename={"/"}>
-        <App />
-    </HashRouter>
+    <ConfigProvider theme={{
+        components: {
+            Button: {
+                colorPrimaryBorderHover: 'red',
+                colorPrimaryHover: '#425029',
+                colorPrimary: "#566B30",
+                colorPrimaryActive: 'lightgray',
+                colorPrimaryTextHover: 'lightgray',
+            }
+        }
+    }}>
+        <HashRouter basename={"/"}>
+            <App />
+        </HashRouter>
+    </ConfigProvider>
+
 );
 
 // If you want to start measuring performance in your app, pass a function

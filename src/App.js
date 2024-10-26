@@ -57,9 +57,9 @@ function App() {
         <div className={"bottomnavWrapper"}>
           <center>
             <div className="bottomnav">
-              <button type="button" className="btn btn-link" onClick={navigateLanding}><HomeFilled /></button>
-              <button type="button" className="btn btn-link" onClick={navigateGroupings}><BookFilled /></button>
-              <button type="button" className="btn btn-link" onClick={navigateSettings}><SettingFilled /></button>
+              <button type="button" className="reactButton" onClick={navigateLanding}><HomeFilled /></button>
+              <button type="button" className="reactButton" onClick={navigateGroupings}><BookFilled /></button>
+              <button type="button" className="reactButton" onClick={navigateSettings}><SettingFilled /></button>
             </div>
           </center>
         </div>

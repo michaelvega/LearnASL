@@ -1,8 +1,119 @@
-.textWrapperHorizontalLanding {
+.wrapperIntroduction {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 4rem;
-    margin-bottom: 4rem;
+}
+
+.headerIntroduction {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    gap: 5%;
+}
+
+.verticalWrapperIntroduction {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    width: 80%;
     /*gap: 2rem;*/
+}
+
+.bigGreenButton {
+    background-color: #5a7c46; /* Green background */
+    color: white; /* Text color */
+    border-radius: 30px; /* Rounded corners */
+    padding: 10px 40px; /* Padding */
+    font-size: 18px; /* Text size */
+    font-weight: bold; /* Bold text */
+    border: none; /* No border */
+    position: relative; /* To allow absolutely positioned stripes */
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3); /* Drop shadow */
+    overflow: hidden; /* Keeps the stripes within the button */
+}
+
+.bigGreenButton::before {
+    content: '';
+    position: absolute;
+    top: -10px; /* Position the first stripe */
+    left: -40px; /* Extend farther left */
+    width: 150px; /* Increased width to extend the stripe */
+    height: 150%; /* Extend the height */
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 50%, transparent 50%);
+    z-index: 1; /* Behind the text */
+    pointer-events: none; /* Ensure it's not interactive */
+}
+
+.bigGreenButton::after {
+    content: '';
+    position: absolute;
+    top: 20px; /* Position the second stripe */
+    left: -40px; /* Extend farther left */
+    width: 150px; /* Increased width to extend the stripe */
+    height: 150%; /* Extend the height */
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 50%, transparent 50%);
+    z-index: 1; /* Behind the text */
+    pointer-events: none; /* Ensure it's not interactive */
+}
+
+.bigGreenButton span {
+    z-index: 2; /* Text above stripes */
+    position: relative;
+}
+
+.bigGreenButton:hover {
+    background-color: #496836; /* Darken button on hover */
+}
+
+.bigGreenButton:active {
+    box-shadow: none; /* Remove shadow on click */
+}
+
+.topTextChat {
+    background-image: url('../../assets/textBubble.png'); /* Use the text bubble image */
+    background-size: contain;
+    background-repeat: no-repeat;
+    border-radius: 20px; /* Adjust as needed, though the image likely handles this */
+    padding-bottom: 25%; /* Add padding to keep the text inside the bubble */
+    padding-top: 30px;
+    padding-right: 50px;
+    padding-left: 50px;
+    max-width: 500px;
+    min-height: 150px; /* Minimum height to fit the text properly */
+    position: relative;
+    font-size: 18px;
+    line-height: 1.5;
+    font-weight: bold;
+    color: #000;
+    text-align: left;
+    display: flex;
+    align-items: center; /* Vertically center the text */
+}
+
+
+.triangleWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-right: 20%;
+}
+
+.triangle {
+
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #d1d5be;
+}
+
+.characterTextBubble {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
 }
