@@ -1,0 +1,8 @@
+.textWrapperHorizontalLanding {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+    /*gap: 2rem;*/
+}
