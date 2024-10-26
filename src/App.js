@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import {ExperimentFilled, HomeFilled, SettingFilled, SmileFilled, BookFilled} from "@ant-design/icons";
 import 'bootstrap/dist/css/bootstrap.css';
 import Landing from "./components/landing/Landing";
+import Introduction from "./components/introduction/Introduction";
 
 
 
@@ -66,6 +67,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/landing" element={<Landing />} />
+          <Route path="/introduction" element={<Introduction />} />
         </Routes>
       </div>
   )

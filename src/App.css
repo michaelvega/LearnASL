@@ -1,5 +1,11 @@
+:root {
+  --primary: #566B30;
+  --secondary: #C4CBB6;
+  --background: #FFFAF4;
+}
+
 .bottomnavWrapper {
-  background-color: #0078e0; /* used to be 2C3E50 */
+  background-color: var(--secondary); /* used to be 2C3E50 */
   overflow: hidden;
   position: fixed;
   bottom: 0;
@@ -16,29 +22,15 @@
 /* Style the links inside the navigation bar */
 .bottomnav a {
   float: left;
-  color: #f2f2f2;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
   font-size: 1rem;
 }
 
-/* Change the color of links on hover */
-.bottomnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-/* Add a color to the active/current link */
-.bottomnav a.active {
-  background-color: #0080ff;
-  color: white;
-}
-
-
 .bottomnav button {
   float: left;
-  color: #f2f2f2;
+  color: #000000;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
@@ -51,8 +43,10 @@
   color: black;
 }
 
-/* Add a color to the active/current link */
-.bottomnav button.active {
-  background-color: #0080ff;
-  color: white;
+/* fix the blue on active later
+.bottomnav button span svg:active {
+  fill: red;
+  color: rebeccapurple;
+  background-color: aquamarine;
 }
+*/
