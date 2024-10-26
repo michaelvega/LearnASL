@@ -13,7 +13,7 @@ import textBubble from "../../assets/textBubble.png";
 
 
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
-import 'antd/dist/reset.css'; // Make sure you import Antd styles
+import 'antd/dist/reset.css'; // Make sure you import Antd style
 
 const frames = [
     { text: 'Hi! My name is Aloeha the Aloe Plant, and I will be your guide!', image: {Aloeha7} },
