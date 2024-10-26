@@ -21,6 +21,10 @@ function App() {
     navigate('/landing');
   };
 
+  const navigateGroupings = () => {
+    navigate('/groupings');
+  };
+
   const navigateTutorial = () => {
     const current = localStorage.getItem("current");
     if (current) {
@@ -53,8 +57,7 @@ function App() {
           <center>
             <div className="bottomnav">
               <button type="button" className="btn btn-link" onClick={navigateLanding}><HomeFilled /></button>
-              <button type="button" className="btn btn-link" onClick={navigateHome}><BookFilled /></button>
-              <button type="button" className="btn btn-link" onClick={navigateTutorial}><ExperimentFilled /></button>
+              <button type="button" className="btn btn-link" onClick={navigateGroupings}><BookFilled /></button>
               <button type="button" className="btn btn-link" onClick={navigateSettings}><SettingFilled /></button>
             </div>
           </center>
