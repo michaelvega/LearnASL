@@ -6,3 +6,68 @@
     margin-bottom: 4rem;
     /*gap: 2rem;*/
 }
+
+
+.siteHeader {
+    display: flex;
+    justify-content: flex-start; /* Aligns content to the right */
+    align-items: center; /* Centers content vertically */
+    padding: 10px 20px;
+    position: fixed; /* Makes the header stay at the top */
+    top: 0;
+    right: 0;
+    left: 0;
+    background-color: #FFFAF4; /* Example background color */
+    z-index: 1000; /* Ensures it stays above other elements */
+}
+
+.siteHeader p {
+    margin: 0; /* Removes default margin */
+    font-size: 1.2rem; /* Adjusts font size */
+}
+
+
+
+h1 {
+    font-family: var(--titleFont);
+    font-weight: bold;
+}
+
+p {
+    font-family: var(--bodyFont);
+}
+
+
+.hero {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 3rem;
+}
+
+.heroText {
+    max-width: 42rem;
+    margin-left: 5rem;
+}
+
+.heroText p {
+    margin-top: 2rem;
+    max-width: 28rem;
+    line-height: 1.7;
+}
+
+.heroContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.heroImage {
+    max-width: 80%;
+    height:auto;
+    filter: drop-shadow(0.5rem 0.5rem 0.8rem rgba(0, 0, 0, 0.2));
+}
+
+.heroBtn {
+    margin-top: 1rem;
+}
