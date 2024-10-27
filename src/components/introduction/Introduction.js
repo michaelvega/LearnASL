@@ -8,7 +8,6 @@ import Aloeha3 from "../../assets/Aloeha3.png"
 import Aloeha6 from "../../assets/Aloeha6.png"
 import Aloeha4 from "../../assets/Aloeha4.png"
 import Aloeha14 from "../../assets/Aloeha14.png"
-import Aloeha6 from "../../assets/Aloeha6.png"
 import textBubble from "../../assets/textBubble.png";
 
 
@@ -16,12 +15,12 @@ import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css'; // Make sure you import Antd style
 
 const frames = [
-    { text: 'Hi! My name is Aloeha the Aloe Plant, and I will be your guide!', image: {Aloeha7} },
-    { text: 'Welcome to LearnASL!', image: {Aloeha3} },
-    { text: 'Lets get you right into it so you can really see what LearnASL is all about!', image: {Aloeha6} },
-    { text: 'Please start by entering your preferred first name in the text box above', image: {Aloeha4} },
-    { text: 'Sweet! Also, did you notice the progress bar move? This will show you how far in a lesson you are. Awesome first step.', image: {Aloeha14} },
-    { text: 'To get you situated with how we work, lets teach you how to introduce yourself in ASL!', image: {Aloeha6} }
+    { text: 'Hi! My name is Aloeha the Aloe Plant, and I will be your guide!', image: Aloeha7 },
+    { text: 'Welcome to LearnASL!', image: Aloeha3 },
+    { text: 'Lets get you right into it so you can really see what LearnASL is all about!', image: Aloeha6 },
+    { text: 'Please start by entering your preferred first name in the text box above', image: Aloeha4 },
+    { text: 'Sweet! Also, did you notice the progress bar move? This will show you how far in a lesson you are. Awesome first step.', image: Aloeha14 },
+    { text: 'To get you situated with how we work, lets teach you how to introduce yourself in ASL!', image: Aloeha6 }
 ];
 
 function Introduction() {
@@ -68,7 +67,7 @@ function Introduction() {
                         {frames[currentFrame].text}
                     </div>
                     <img
-                        src={frame1}
+                        src={frames[currentFrame].image}
                         alt="Guide"
                         style={{ width: '150px', height: 'auto', marginLeft: '20px' }}
                     />
