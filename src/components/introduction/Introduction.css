@@ -1,3 +1,5 @@
+
+
 .wrapperIntroduction {
     display: flex;
     flex-direction: column;
@@ -8,10 +10,8 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
     width: 100%;
     gap: 5%;
-    margin-bottom: 3%;
 }
 
 .verticalWrapperIntroduction {
@@ -75,58 +75,69 @@
 }
 
 .topTextChat {
+
     background-image: url('../../assets/textBubble.png'); /* Use the text bubble image */
     background-size: contain;
     background-repeat: no-repeat;
+    background-position: top left;
     border-radius: 20px; /* Adjust as needed, though the image likely handles this */
-    padding-bottom: 25%; /* Add padding to keep the text inside the bubble */
-    padding-top: 30px;
-    padding-right: 50px;
-    padding-left: 50px;
+    padding: 30px 50px 25%; /* Adjust padding to fit the text bubble shape */
     max-width: 500px;
     min-height: 150px; /* Minimum height to fit the text properly */
-    position: relative;
     font-size: 18px;
     line-height: 1.5;
     font-weight: bold;
     color: #000;
-    text-align: left;
     display: flex;
-    align-items: center; /* Vertically center the text */
+    display: flex; /* Enable flexbox for centering */
+    align-items: center; /* Centers vertically */
+    justify-content: center; /* Centers horizontally */
+    text-align: center; /* Aligns text in the center */
 }
 
 
-.triangleWrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    margin-right: 20%;
+.box {
+    position: absolute; /* Allows positioning relative to parent */
+    bottom: .07rem; /* Moves to the bottom of the parent container */
+    right: .07rem; /* Moves to the right of the parent container */
+    background-color: var(--secondary);
+    width: 10px;
+    height: 10px;
 }
 
-.triangle {
-
-    width: 0;
-    height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-top: 20px solid #d1d5be;
-}
 
 .characterTextBubble {
+    position: relative; /* Makes it the reference point for absolute positioning */
     display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+    align-items: flex-end; /* Aligns character at the bottom */
+    justify-content: flex-start; /* Aligns content to the left */
     margin: 20px 0;
+    width: 80%;
+    height: 20rem; /* Adjust as needed */
 }
 
-.progressTop {
+/* Text bubble styling */
+.textBubbleWrapper {
+    background-color: var(--secondary);
+    max-width: 30%;
+    position: absolute; /* Makes the bubble move relative to the character */
+    bottom: 50%; /* Adjust the vertical position */
+    right: 25%; /* Aligns it to the left */
+
     display: flex;
-    flex-direction: row;
     align-items: center;
+    justify-content: center;
 
+    border-radius: 1rem;
+    padding: 2%;
 }
 
-.progressTop .ant-progress-inner {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Standard drop shadow */
+
+
+.aloe-avatar {
+    position: absolute;
+    bottom: 0; /* Aligns to the bottom of the red container */
+    right: 0; /* Aligns to the left */
+    width: 20%; /* Adjust size as needed */
+    height: auto;
 }
