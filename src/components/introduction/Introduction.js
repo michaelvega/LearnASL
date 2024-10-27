@@ -23,6 +23,11 @@ const frames = [
     { text: 'To get you situated with how we work, lets teach you how to introduce yourself in ASL!', image: Aloeha6 }
 ];
 
+const twoColors = {
+    '0%': '#97b952',
+    '100%': '#566B30',
+};
+
 function Introduction() {
 
     const navigate = useNavigate();
@@ -56,7 +61,7 @@ function Introduction() {
                     <Button className="bigGreenButton" type="primary" onClick={navigateHome}>
                         Back to Home
                     </Button>
-                    <Progress percent={progressPercent} showInfo={false} />
+                    <Progress strokeColor={twoColors} strokeWidth={"2rem"}  className={"progressTop"} percent={progressPercent} showInfo={false} />
                 </div>
                 <h1>Introduction!</h1>
 

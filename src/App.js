@@ -4,6 +4,9 @@ import {ExperimentFilled, HomeFilled, SettingFilled, SmileFilled, BookFilled} fr
 import 'bootstrap/dist/css/bootstrap.css';
 import Landing from "./components/landing/Landing";
 import Introduction from "./components/introduction/Introduction";
+import Learn from "./components/learn/Learn";
+import Hands from "./components/learn/hands";
+import HandGestureComparison from "./components/learn/hands";
 
 
 
@@ -68,6 +71,8 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/landing" element={<Landing />} />
           <Route path="/introduction" element={<Introduction />} />
+          <Route path="/learn" element={<Learn/>} />
+          <Route path="/hands" element={<HandGestureComparison/>} />
         </Routes>
       </div>
   )
