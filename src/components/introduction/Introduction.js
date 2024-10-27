@@ -62,16 +62,24 @@ function Introduction() {
 
 
                 {/* Character and Text Bubble */}
-                <div className={"characterTextBubble"}>
-                    <div className={"topTextChat"}>
-                        {frames[currentFrame].text}
+                <div className="characterTextBubble">
+                    <div className="textBubbleWrapper">
+                        <div className="bubbleText">{frames[currentFrame].text}</div>
+                        <div className = "box"></div>
+                        
                     </div>
+                    {/* <div className="textBubbleWrapper">
+                         <div className="topTextChat">
+                            {frames[currentFrame].text}
+                        </div>
+                    </div> */}
                     <img
                         src={frames[currentFrame].image}
                         alt="Guide"
-                        style={{ width: '150px', height: 'auto', marginLeft: '20px' }}
+                        className="aloe-avatar"
                     />
                 </div>
+
 
                 {/* Navigation Buttons */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '300px', margin: '0 auto' }}>
