@@ -197,6 +197,7 @@ function HandTracking() {
 
             console.log(`RMSE: ${rmse.toFixed(4)}`);
 
+            //random
             // Adjusted thresholds for normalized distances
             const anomalyThreshold = 0.2; // 20% of hand length
             const rmseThreshold = 0.19; // 20% of hand length
