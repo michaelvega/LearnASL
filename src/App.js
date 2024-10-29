@@ -7,6 +7,7 @@ import Introduction from "./components/introduction/Introduction";
 import Learn from "./components/learn/Learn";
 import Hands from "./components/learn/HandTracking";
 import HandGestureComparison from "./components/learn/HandTracking";
+import Tutorial from "./components/tutorial/Tutorial";
 
 
 
@@ -80,6 +81,7 @@ function App() {
           <Route path="/landing" element={<Landing />} />
           <Route path="/introduction" element={<Introduction />} />
           <Route path="/learn" element={<Learn/>} />
+          <Route path="/tutorial" element={<Tutorial/>} />
         </Routes>
       </div>
   )
