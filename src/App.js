@@ -72,7 +72,6 @@ function App() {
           <Route path="/landing" element={<Landing />} />
           <Route path="/introduction" element={<Introduction />} />
           <Route path="/learn" element={<Learn/>} />
-          <Route path="/hands" element={<HandGestureComparison/>} />
         </Routes>
       </div>
   )
