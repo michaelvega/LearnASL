@@ -68,6 +68,6 @@ p {
     filter: drop-shadow(0.5rem 0.5rem 0.8rem rgba(0, 0, 0, 0.2));
 }
 
-.heroBtn {
-    margin-top: 1rem;
+.bigGreenButton {
+    margin-top: 1.5rem;
 }

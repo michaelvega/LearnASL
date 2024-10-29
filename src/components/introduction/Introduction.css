@@ -1,4 +1,8 @@
 
+.introTitle {
+    font-weight: bold;
+    margin-top: 1rem;
+}
 
 .wrapperIntroduction {
     display: flex;
@@ -10,9 +14,17 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
     gap: 5%;
 }
+
+/*PLLEAAASE FIX ALIGNMENT IN ANOTHER WAY THAN THIS, this aligns the back button with the progressTop*/
+.progressTop {
+    margin-top: 1.9rem;
+}
+
+
 
 .verticalWrapperIntroduction {
     display: flex;
@@ -132,7 +144,10 @@
     padding: 2%;
 }
 
-
+.bubbleText {
+    font-family: var(--bodyFont);
+    font-weight: bold;
+}
 
 .aloe-avatar {
     position: absolute;

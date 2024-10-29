@@ -20,6 +20,7 @@ function Learn() {
         navigate('/home');
     };
 
+
     const [currentFrame, setCurrentFrame] = useState(0);
 
     // Progress percentage calculation based on current frame
