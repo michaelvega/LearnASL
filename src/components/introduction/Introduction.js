@@ -74,7 +74,7 @@ function Introduction() {
                 <div className="characterTextBubble">
                     <div className="textBubbleWrapper">
                         <div className="bubbleText">{frames[currentFrame].text}</div>
-                        <div className = "box"></div>
+                        <div className = "boxIntroduction"></div>
                         
                     </div>
                     
@@ -88,10 +88,10 @@ function Introduction() {
 
                 {/* Navigation Buttons */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '300px', margin: '0 auto' , gap : "1rem"}}>
-                    <Button type="primary" disabled={currentFrame === 0} onClick={handleBack}>
+                    <Button className="bigGreenButton" type="primary" disabled={currentFrame === 0} onClick={handleBack}>
                         <CaretLeftOutlined /> Back
                     </Button>
-                    <Button type="primary" disabled={currentFrame === frames.length - 1} onClick={handleNext}>
+                    <Button className="bigGreenButton" type="primary" disabled={currentFrame === frames.length - 1} onClick={handleNext}>
                         Next <CaretRightOutlined />
                     </Button>
                 </div>

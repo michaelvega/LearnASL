@@ -5,8 +5,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Landing from "./components/landing/Landing";
 import Introduction from "./components/introduction/Introduction";
 import Learn from "./components/learn/Learn";
-import Hands from "./components/learn/hands";
-import HandGestureComparison from "./components/learn/hands";
+import Hands from "./components/learn/HandTracking";
+import HandGestureComparison from "./components/learn/HandTracking";
 
 
 

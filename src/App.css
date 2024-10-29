@@ -78,3 +78,66 @@
 .reactButton:active svg {
   color: white; /* Change the icon color to white when pressed */
 }
+
+.bigGreenButton {
+  background-color: #5a7c46; /* Green background */
+  color: white; /* Text color */
+  border-radius: 30px; /* Rounded corners */
+  padding: 10px 40px; /* Padding */
+  font-size: 18px; /* Text size */
+  font-weight: bold; /* Bold text */
+  border: none; /* No border */
+  position: relative; /* To allow absolutely positioned stripes */
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3); /* Drop shadow */
+  overflow: hidden; /* Keeps the stripes within the button */
+}
+
+.bigGreenButton::before {
+  content: '';
+  position: absolute;
+  top: -10px; /* Position the first stripe */
+  left: -40px; /* Extend farther left */
+  width: 150px; /* Increased width to extend the stripe */
+  height: 150%; /* Extend the height */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 50%, transparent 50%);
+  z-index: 1; /* Behind the text */
+  pointer-events: none; /* Ensure it's not interactive */
+}
+
+.bigGreenButton::after {
+  content: '';
+  position: absolute;
+  top: 20px; /* Position the second stripe */
+  left: -40px; /* Extend farther left */
+  width: 150px; /* Increased width to extend the stripe */
+  height: 150%; /* Extend the height */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 50%, transparent 50%);
+  z-index: 1; /* Behind the text */
+  pointer-events: none; /* Ensure it's not interactive */
+}
+
+.bigGreenButton span {
+  z-index: 2; /* Text above stripes */
+  position: relative;
+}
+
+.bigGreenButton:hover {
+  background-color: #496836; /* Darken button on hover */
+}
+
+.bigGreenButton:active {
+  box-shadow: none; /* Remove shadow on click */
+}
+
+.bigGreenButton {
+  margin-top: 1.5rem;
+}
+
+h1 {
+  font-family: var(--titleFont);
+  font-weight: bold;
+}
+
+p {
+  font-family: var(--bodyFont);
+}

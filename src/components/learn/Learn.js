@@ -5,7 +5,7 @@ import {Link, useNavigate} from "react-router-dom";
 import { Button, Progress } from "antd";
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css'; // Make sure you import Antd style
-import HandTracking from "../learn/hands"
+import HandTracking from "./HandTracking"
 
 const twoColors = {
     '0%': '#97b952',
