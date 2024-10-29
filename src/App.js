@@ -29,6 +29,12 @@ function App() {
     navigate('/groupings');
   };
 
+  const navigateLearn = () => {
+    navigate('/learn');
+  };
+
+  
+
   const navigateTutorial = () => {
     const current = localStorage.getItem("current");
     if (current) {
@@ -61,7 +67,9 @@ function App() {
           <center>
             <div className="bottomnav">
               <button type="button" className="reactButton" onClick={navigateLanding}><HomeFilled /></button>
-              <button type="button" className="reactButton" onClick={navigateGroupings}><BookFilled /></button>
+
+              {/* CHANGE BACK TO GROUPINGS, LEARN UNTIL GROUPING ARE IMPLEMENTED */}
+              <button type="button" className="reactButton" onClick={navigateLearn}><BookFilled /></button>
               <button type="button" className="reactButton" onClick={navigateSettings}><SettingFilled /></button>
             </div>
           </center>

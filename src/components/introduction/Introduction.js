@@ -36,6 +36,10 @@ function Introduction() {
         navigate('/home');
     };
 
+    const navigateLanding = () => {
+        navigate('/landing');
+      };
+
     const [currentFrame, setCurrentFrame] = useState(0);
 
     // Progress percentage calculation based on current frame
@@ -58,12 +62,12 @@ function Introduction() {
         <div className={"wrapperIntroduction"}>
             <div className={"verticalWrapperIntroduction"}>
                 <div className={"headerIntroduction"}>
-                    <Button className="bigGreenButton" type="primary" onClick={navigateHome}>
+                    <Button className="bigGreenButton" type="primary" onClick={navigateLanding}>
                         Back to Home
                     </Button>
                     <Progress strokeColor={twoColors} strokeWidth={"2rem"}  className={"progressTop"} percent={progressPercent} showInfo={false} />
                 </div>
-                <h1>Introduction!</h1>
+                <h1 className = "introTitle">Introduction!</h1>
 
 
                 {/* Character and Text Bubble */}
@@ -73,11 +77,7 @@ function Introduction() {
                         <div className = "box"></div>
                         
                     </div>
-                    {/* <div className="textBubbleWrapper">
-                         <div className="topTextChat">
-                            {frames[currentFrame].text}
-                        </div>
-                    </div> */}
+                    
                     <img
                         src={frames[currentFrame].image}
                         alt="Guide"
@@ -87,7 +87,7 @@ function Introduction() {
 
 
                 {/* Navigation Buttons */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '300px', margin: '0 auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '300px', margin: '0 auto' , gap : "1rem"}}>
                     <Button type="primary" disabled={currentFrame === 0} onClick={handleBack}>
                         <CaretLeftOutlined /> Back
                     </Button>

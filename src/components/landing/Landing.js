@@ -20,6 +20,7 @@ function Landing() {
         navigate('/introduction');
     };
 
+
     return (
         <div className={"textWrapperHorizontalLanding"}>
             <header class="siteHeader">
@@ -36,7 +37,7 @@ function Landing() {
 
                 <div className = "heroContent">
                     <img className = "heroImage" src = {heroImage} ></img>
-                    <Button className = "heroBtn" type="primary">Primary Button</Button>
+                    <Button className="bigGreenButton" type="primary" onClick={navigateIntroduction}>Start Learning ASL</Button>
                 </div>
             </div>
         </div>
