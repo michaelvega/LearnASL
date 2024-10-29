@@ -141,3 +141,31 @@ h1 {
 p {
   font-family: var(--bodyFont);
 }
+
+
+/* Text input styling */
+input {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 2px solid #D0D6C5;  /* Light border color */
+  border-radius: 8px;
+  outline: none;
+  background-color: #FFFFFF;  /* Light background */
+  color: #566B30;             /* Primary text color */
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Focus effect */
+input:focus {
+  border-color: #566B30;      /* Darker border color on focus */
+  box-shadow: 0 0 8px rgba(86, 107, 48, 0.3);  /* Subtle glow */
+}
+
+/* Placeholder styling */
+input::placeholder {
+  color: #93978b;
+  font-style: italic;
+}
