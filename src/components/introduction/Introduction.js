@@ -15,12 +15,12 @@ import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css'; // Make sure you import Antd style
 
 const frames = [
-    { text: 'Hi! My name is Aloeha the Aloe Plant, and I will be your guide!', image: Aloeha7 },
-    { text: 'Welcome to LearnASL!', image: Aloeha3 },
-    { text: 'Lets get you right into it so you can really see what LearnASL is all about!', image: Aloeha6 },
-    { text: 'Please start by entering your preferred first name in the text box above', image: Aloeha4 },
-    { text: 'Sweet! Also, did you notice the progress bar move? This will show you how far in a lesson you are. Awesome first step.', image: Aloeha14 },
-    { text: 'To get you situated with how we work, lets teach you how to introduce yourself in ASL!', image: Aloeha6 }
+    { text: 'Hi! My name is Aloeha the Aloe Plant, and I will be your guide!', image: Aloeha7, insertName: false},
+    { text: 'Welcome to LearnASL!', image: Aloeha3, insertName: false},
+    { text: 'Lets get you right into it so you can really see what LearnASL is all about!', image: Aloeha6, insertName: false},
+    { text: 'Please start by entering your preferred first name in the text box below', image: Aloeha4, insertName: true},
+    { text: 'Sweet! Also, did you notice the progress bar move? This will show you how far in a lesson you are. Awesome first step.', image: Aloeha14, insertName: false},
+    { text: 'To get you situated with how we work, lets teach you how to introduce yourself in ASL!', image: Aloeha6, insertName: false}
 ];
 
 const twoColors = {
@@ -31,6 +31,13 @@ const twoColors = {
 function Introduction() {
 
     const navigate = useNavigate();
+
+    const [name, setName] = useState('');
+
+    const handleNameChange = (event) => {
+        setName(event.target.value)
+    }
+
 
     const navigateHome = () => {
         navigate('/home');
@@ -68,14 +75,11 @@ function Introduction() {
                     <Progress strokeColor={twoColors} strokeWidth={"2rem"}  className={"progressTop"} percent={progressPercent} showInfo={false} />
                 </div>
                 <h1 className = "introTitle">Introduction!</h1>
-
-
                 {/* Character and Text Bubble */}
                 <div className="characterTextBubble">
                     <div className="textBubbleWrapper">
                         <div className="bubbleText">{frames[currentFrame].text}</div>
                         <div className = "boxIntroduction"></div>
-                        
                     </div>
                     
                     <img
@@ -84,6 +88,9 @@ function Introduction() {
                         className="aloe-avatar"
                     />
                 </div>
+                {frames[currentFrame].insertName && <input type="text" id="name" value = {name} onChange = {handleNameChange} class="name-input" placeholder="Your name here..." style={{marginTop : "1rem"}}/>}
+
+
 
 
                 {/* Navigation Buttons */}
