@@ -1,0 +1,73 @@
+.navigationWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.title {
+    margin-top: 3%;
+    font-weight: bold;
+}
+
+#introduceYourself {
+    background-color: #444386; 
+    width: 30%;
+    height: 3.5rem;
+    letter-spacing: .04rem;
+    font-size: 1.15rem;
+}
+
+#introduceYourself:hover{
+    background-color: #343369;
+}
+
+#basicPhrases {
+    background-color: #BB0E0E;
+    width: 30%;
+    height: 3.5rem;
+    letter-spacing: .04rem;
+    font-size: 1.15rem;
+}
+
+#basicPhrases:hover {
+    background-color: #950b0b;
+}
+
+#medicalTerminology {
+    background-color: #E78C0B;
+    width: 30%;
+    height: 3.5rem;
+    letter-spacing: .04rem;
+    font-size: 1.15rem;
+}
+
+#medicalTerminology:hover {
+    background-color: #af6a09;
+
+}
+
+#unit1 {
+    background-color: #D10680;
+    width: 30%;
+    height: 3.5rem;
+    letter-spacing: .04rem;
+    font-size: 1.15rem;
+}
+
+#unit1:hover {
+    background-color: #9f0361;
+
+}
+
+#unit2 {
+    background-color: #102CA9;
+    width: 30%;
+    height: 3.5rem;
+    letter-spacing: .04rem;
+    font-size: 1.15rem;
+}
+
+#unit2:hover {
+    background-color: #0c248e;
+}

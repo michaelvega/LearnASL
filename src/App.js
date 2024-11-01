@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Landing from "./components/landing/Landing";
 import Introduction from "./components/introduction/Introduction";
 import Learn from "./components/learn/Learn";
+import Navigation from "./components/navigation/Navigation"
+import IntroduceYourself from './components/introduceYourself/IntroduceYourself';
 import Hands from "./components/learn/HandTracking";
 import HandGestureComparison from "./components/learn/HandTracking";
 import Tutorial from "./components/tutorial/Tutorial";
@@ -26,13 +28,17 @@ function App() {
     navigate('/landing');
   };
 
-  const navigateGroupings = () => {
-    navigate('/groupings');
-  };
-
   const navigateLearn = () => {
     navigate('/learn');
   };
+
+  const navigateNavigation = () => {
+    navigate('/navigation')
+  }
+
+  const navigateIntroduceYourself = () => {
+    navigate('/introduceYourself')
+  }
 
   
 
@@ -70,7 +76,7 @@ function App() {
               <button type="button" className="reactButton" onClick={navigateLanding}><HomeFilled /></button>
 
               {/* CHANGE BACK TO GROUPINGS, LEARN UNTIL GROUPING ARE IMPLEMENTED */}
-              <button type="button" className="reactButton" onClick={navigateLearn}><BookFilled /></button>
+              <button type="button" className="reactButton" onClick={navigateNavigation}><BookFilled /></button>
               <button type="button" className="reactButton" onClick={navigateSettings}><SettingFilled /></button>
             </div>
           </center>
@@ -82,6 +88,8 @@ function App() {
           <Route path="/introduction" element={<Introduction />} />
           <Route path="/learn" element={<Learn/>} />
           <Route path="/tutorial" element={<Tutorial/>} />
+          <Route path="/navigation" element = {<Navigation/>} />
+          <Route path="/introduceYourself" element= {<IntroduceYourself/>} />
         </Routes>
       </div>
   )

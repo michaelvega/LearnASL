@@ -1,0 +1,83 @@
+.introduceYourselfWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.title {
+    margin-top: 3%;
+    font-weight: bold;
+}
+
+.lessons {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.lessonBtn {
+    width: 8rem;
+    height: 8rem;
+
+
+    background-color: var(--secondary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Creates the drop shadow */
+}
+
+/*HARD CODED HOVER, CHANGE LATER*/
+.lessonBtn:hover {
+    cursor: pointer;
+    background-color: #999f8e;
+}
+
+.lessonBtn:active {
+    box-shadow: none; /* Remove shadow on click */
+}
+
+.lessonTitle {
+    margin-left: 2rem;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.imgW {
+    width: 85%;
+    height: auto;
+
+    margin-left: 5%;
+    margin-bottom: 5%;
+}
+
+.imgL {
+    width: 85%;
+    height: auto;
+
+    margin-left: 5%;
+    margin-bottom: 5%;
+}
+
+.imgP {
+    width: 85%;
+    height: auto;
+
+    margin-bottom: 5%;
+}
+
+.imgR {
+    width: 85%;
+    height: auto;
+    margin-bottom: 5%;
+}
+
+.lessonWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
