@@ -3,8 +3,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import "./Tutorial.css";
 import {Link, useNavigate} from "react-router-dom";
 import {Button} from "antd";
-import tutorialr1 from "../../assets/tutorialr1.jpg"
-import tutorialr2 from "../../assets/tutorialr2.jpg"
+import markedr1 from "../../assets/tutorials/markedr1.jpg"
+import markedr2 from "../../assets/tutorials/markedr2.jpg"
 
 
 function Landing() {
@@ -22,12 +22,12 @@ function Landing() {
             <h1 className="titleTutorial">The letter "R"</h1>
             <div className="imgContainerTutorial">
                 <img
-                    src={tutorialr1}
+                    src={markedr1}
                     alt="ASL Letter R"
                     className="imgTutorial"
                 />
                 <img
-                    src={tutorialr2}
+                    src={markedr2}
                     alt="ASL Letter R"
                     className="imgTutorial"
                 />
