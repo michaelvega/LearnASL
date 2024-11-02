@@ -448,7 +448,7 @@ function HandTracking() {
                 />
             </div>
 
-            {/* **Add the checkbox below the video canvas** */}
+            {/* **Add the checkbox below the video canvas**  do the flex later*/}
             {cameraStarted && (
                 <div style={{ marginTop: '10px' }}>
                     <label style={{ display: "flex", flexDirection: "row" }}>
