@@ -18,7 +18,7 @@ const frames = [
     { text: 'Hi! My name is Aloeha the Aloe Plant, and I will be your guide!', image: Aloeha7, insertName: false},
     { text: 'Welcome to LearnASL!', image: Aloeha3, insertName: false},
     { text: 'Lets get you right into it so you can really see what LearnASL is all about!', image: Aloeha6, insertName: false},
-    { text: 'Please start by entering your preferred first name in the text box below.', image: Aloeha15, insertName: true},
+    { text: 'Please start by entering your preferred first name and last initital in the text box below.', image: Aloeha15, insertName: true},
     { text: 'Sweet! Also did you notice the progress bar move? This will show you how far in a lesson you are. Awesome first step.', image: Aloeha14, insertName: false},
     { text: 'To get you situated with how we work, lets teach you how to introduce yourself in ASL!', image: Aloeha6, insertName: false}
 ];
@@ -54,6 +54,17 @@ function Introduction() {
 
     // Handlers for navigating through frames
     const handleNext = () => {
+
+        //this checks if the name is properly formatted (FirstName LastInitial)
+        if (frames[currentFrame].insertName) {
+            const nameFormat = /^[a-z]+ [a-z]\.?$/i;
+            if(!nameFormat.test(name)) {
+                alert("Please enter your name in 'FirstName LastInitial' format, e.g., 'Andre G'");
+                return;
+            }
+            localStorage.setItem("userInitials", name.split(" ")[0][0].toUpperCase() + name.split(" ")[1][0].toUpperCase()); // Save name to localStorage
+        }       
+
         if (currentFrame < frames.length - 1) {
             setCurrentFrame(currentFrame + 1);
         }
@@ -88,7 +99,7 @@ function Introduction() {
                         className="aloe-avatar"
                     />
                 </div>
-                {frames[currentFrame].insertName && <input type="text" id="name" value = {name} onChange = {handleNameChange} class="name-input" placeholder="Your name here..." style={{marginTop : "1rem"}}/>}
+                {frames[currentFrame].insertName && <input type="text" id="name" value = {name} onChange = {handleNameChange} class="name-input" placeholder="Enter your name (e.g., Andre G)" style={{marginTop : "1rem"}}/>}
 
 
 
