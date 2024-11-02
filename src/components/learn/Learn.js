@@ -75,6 +75,7 @@ function Learn() {
                     justifyContent: 'space-between',
                     maxWidth: '300px',
                     margin: '0 auto',
+                    marginBottom: "3rem",
                     gap: '1rem'
                 }}>
                     <Button className="bigGreenButton" type="primary" disabled={currentIndex === 0} onClick={handleBack}>

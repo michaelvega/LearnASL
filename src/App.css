@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inika:wght@400;700&family=Nunito:wght@400;600;700&family=Inria+Sans:wght@400;600;700&display=swap');
 
 :root {
-  --primary: #566B30;
-  --secondary: #C4CBB6;
-  --background: #FFFAF4;
+  --primary: #283618;
+  --secondary: #606c38;
+  --background: #fefae0;
 
   --titleFont: 'Inika', serif;
   --bodyFont: 'Nunito', sans-serif;
@@ -37,7 +37,7 @@
 
 .bottomnav button {
   float: left;
-  color: #000000;
+  color: #ffffff;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
