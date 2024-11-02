@@ -12,7 +12,7 @@
 }
 
 .bottomnavWrapper {
-  background-color: var(--secondary); /* used to be 2C3E50 */
+  background-color: var(--secondary);
   overflow: hidden;
   position: fixed;
   bottom: 0;
