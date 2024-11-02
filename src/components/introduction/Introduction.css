@@ -125,7 +125,7 @@
     }
     to {
       opacity: 0;
-      transform: translateX(-100%);
+      transform: translateX(-60%);
     }
   }
   
@@ -137,7 +137,7 @@
   @keyframes slideInRight {
     from {
       opacity: 0;
-      transform: translateX(100%);
+      transform: translateX(40%);
     }
     to {
       opacity: 1;
@@ -157,7 +157,7 @@
     }
     to {
       opacity: 0;
-      transform: translateX(100%);
+      transform: translateX(40%);
     }
   }
   
@@ -169,7 +169,7 @@
   @keyframes slideInLeft {
     from {
       opacity: 0;
-      transform: translateX(-100%);
+      transform: translateX(-60%);
     }
     to {
       opacity: 1;
