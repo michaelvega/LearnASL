@@ -263,7 +263,6 @@ function HandTracking() {
             console.log(JSON.stringify(feedbackDict, null, 2));
 
             // Draw user's hand landmarks and connections on camera canvas
-            //remove
 
             drawLandmarks(
                 canvasCtx,
