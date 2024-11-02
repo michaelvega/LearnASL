@@ -82,7 +82,7 @@
 /* Text bubble styling */
 .textBubbleWrapper {
     background-color: var(--secondary);
-    max-width: 30%;
+    max-width: 35%;
     position: absolute; /* Makes the bubble move relative to the character */
     bottom: 50%; /* Adjust the vertical position */
     right: 25%; /* Aligns it to the left */
@@ -98,6 +98,7 @@
 .bubbleText {
     font-family: var(--bodyFont);
     font-weight: bold;
+    font-size: 1.2rem;
     color: white;
 }
 
