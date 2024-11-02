@@ -74,8 +74,6 @@ function App() {
           <center>
             <div className="bottomnav">
               <button type="button" className="reactButton" onClick={navigateLanding}><HomeFilled /></button>
-
-              {/* CHANGE BACK TO GROUPINGS, LEARN UNTIL GROUPING ARE IMPLEMENTED */}
               <button type="button" className="reactButton" onClick={navigateNavigation}><BookFilled /></button>
               <button type="button" className="reactButton" onClick={navigateSettings}><SettingFilled /></button>
             </div>
