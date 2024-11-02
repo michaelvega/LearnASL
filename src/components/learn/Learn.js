@@ -9,6 +9,9 @@ import 'antd/dist/reset.css'; // Make sure you import Antd style
 import HandTracking from "./HandTracking";
 import Tutorial from "../tutorial/Tutorial"; // Assume you have a Tutorial component
 
+import R from "../../assets/tutorials/unmarkedR1.png";
+
+
 const components = [
     { component: <Tutorial />, label: "Tutorial" },
     { component: <HandTracking />, label: "Hand Tracking" },
@@ -65,8 +68,12 @@ function Learn() {
 
                 {/* Dynamic Component Display */}
                 <h1>Learn!</h1>
-                <div className="componentContainerLearn"> {/*TODO implement componentContainerLearn*/}
-                    {components[currentIndex].component}
+                <div className = "learnContentWrapper">
+                    <div className="componentContainerLearn"> {/*TODO implement componentContainerLearn*/}
+                        {components[currentIndex].component}
+                    </div>
+
+                    {components[currentIndex].label == "Hand Tracking" && <img className = "exampleImg" src = {R}></img>}
                 </div>
 
                 {/* Navigation Buttons */}

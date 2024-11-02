@@ -4,6 +4,19 @@
     align-items: center;
 }
 
+.learnContentWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: .2rem;
+}
+
+.exampleImg {
+    width: 640px;
+    height: 480px;
+}
+
 .headerLearn {
     display: flex;
     flex-direction: row;
