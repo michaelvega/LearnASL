@@ -1,26 +1,24 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 import "./Introduction.css";
-import {Link, useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Progress } from "antd";
-import Aloeha7 from "../../assets/Aloeha7.png"
-import Aloeha3 from "../../assets/Aloeha3.png"
-import Aloeha6 from "../../assets/Aloeha6.png"
-import Aloeha15 from "../../assets/Aloeha15.png"
-import Aloeha14 from "../../assets/Aloeha14.png"
-import textBubble from "../../assets/textBubble.png";
-
+import Aloeha7 from "../../assets/Aloeha7.png";
+import Aloeha3 from "../../assets/Aloeha3.png";
+import Aloeha6 from "../../assets/Aloeha6.png";
+import Aloeha15 from "../../assets/Aloeha15.png";
+import Aloeha14 from "../../assets/Aloeha14.png";
 
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css'; // Make sure you import Antd style
 
 const frames = [
-    { text: 'Hi! My name is Aloeha the Aloe Plant, and I will be your guide!', image: Aloeha7, insertName: false},
-    { text: 'Welcome to LearnASL!', image: Aloeha3, insertName: false},
-    { text: 'Lets get you right into it so you can really see what LearnASL is all about!', image: Aloeha6, insertName: false},
-    { text: 'Please start by entering your preferred first name and last initital in the text box below.', image: Aloeha15, insertName: true},
-    { text: 'Sweet! Also did you notice the progress bar move? This will show you how far in a lesson you are. Awesome first step.', image: Aloeha14, insertName: false},
-    { text: 'To get you situated with how we work, lets teach you how to introduce yourself in ASL!', image: Aloeha6, insertName: false}
+    { text: 'Hi! My name is Aloeha the Aloe Plant, and I will be your guide!', image: Aloeha7, insertName: false },
+    { text: 'Welcome to LearnASL!', image: Aloeha3, insertName: false },
+    { text: 'Lets get you right into it so you can really see what LearnASL is all about!', image: Aloeha6, insertName: false },
+    { text: 'Please start by entering your preferred first name and last initial in the text box below.', image: Aloeha15, insertName: true },
+    { text: 'Sweet! Also did you notice the progress bar move? This will show you how far in a lesson you are. Awesome first step.', image: Aloeha14, insertName: false },
+    { text: 'To get you situated with how we work, lets teach you how to introduce yourself in ASL!', image: Aloeha6, insertName: false }
 ];
 
 const twoColors = {
@@ -29,50 +27,49 @@ const twoColors = {
 };
 
 function Introduction() {
-
     const navigate = useNavigate();
-
     const [name, setName] = useState('');
+    const [currentFrame, setCurrentFrame] = useState(0);
+    const [animationClass, setAnimationClass] = useState('');
 
     const handleNameChange = (event) => {
-        setName(event.target.value)
-    }
-
-
-    const navigateHome = () => {
-        navigate('/home');
+        setName(event.target.value);
     };
 
     const navigateLanding = () => {
         navigate('/landing');
-      };
+    };
 
-    const [currentFrame, setCurrentFrame] = useState(0);
-
-    // Progress percentage calculation based on current frame
     const progressPercent = ((currentFrame + 1) / frames.length) * 100;
 
-    // Handlers for navigating through frames
     const handleNext = () => {
-
-        //this checks if the name is properly formatted (FirstName LastInitial)
         if (frames[currentFrame].insertName) {
             const nameFormat = /^[a-z]+ [a-z]\.?$/i;
-            if(!nameFormat.test(name)) {
+            if (!nameFormat.test(name)) {
                 alert("Please enter your name in 'FirstName LastInitial' format, e.g., 'Andre G'");
                 return;
             }
-            localStorage.setItem("userInitials", name.split(" ")[0][0].toUpperCase() + name.split(" ")[1][0].toUpperCase()); // Save name to localStorage
+            localStorage.setItem("userInitials", name.split(" ")[0][0].toUpperCase() + name.split(" ")[1][0].toUpperCase());
         }       
 
         if (currentFrame < frames.length - 1) {
-            setCurrentFrame(currentFrame + 1);
+            setAnimationClass('slide-out-left');
+            setTimeout(() => {
+                setCurrentFrame((prev) => prev + 1);
+                setAnimationClass('slide-in-right');
+                setTimeout(() => setAnimationClass(''), 500); // Reset animation class
+            }, 500);
         }
     };
 
     const handleBack = () => {
         if (currentFrame > 0) {
-            setCurrentFrame(currentFrame - 1);
+            setAnimationClass('slide-out-right');
+            setTimeout(() => {
+                setCurrentFrame((prev) => prev - 1);
+                setAnimationClass('slide-in-left');
+                setTimeout(() => setAnimationClass(''), 500); // Reset animation class
+            }, 500);
         }
     };
 
@@ -83,14 +80,14 @@ function Introduction() {
                     <Button className="bigGreenButton" type="primary" onClick={navigateLanding}>
                         Back to Home
                     </Button>
-                    <Progress strokeColor={twoColors} strokeWidth={"2rem"}  className={"progressTop"} percent={progressPercent} showInfo={false} />
+                    <Progress strokeColor={twoColors} strokeWidth={"2rem"} className={"progressTop"} percent={progressPercent} showInfo={false} />
                 </div>
-                <h1 className = "introTitle">Introduction!</h1>
-                {/* Character and Text Bubble */}
-                <div className="characterTextBubble">
+                <h1 className="introTitle">Introduction!</h1>
+                {/* Character and Text Bubble with Animation */}
+                <div className={`characterTextBubble ${animationClass}`}>
                     <div className="textBubbleWrapper">
                         <div className="bubbleText">{frames[currentFrame].text}</div>
-                        <div className = "boxIntroduction"></div>
+                        <div className="boxIntroduction"></div>
                     </div>
                     
                     <img
@@ -99,13 +96,20 @@ function Introduction() {
                         className="aloe-avatar"
                     />
                 </div>
-                {frames[currentFrame].insertName && <input type="text" id="name" value = {name} onChange = {handleNameChange} class="name-input" placeholder="Enter your name (e.g., Andre G)" style={{marginTop : "1rem"}}/>}
-
-
-
+                {frames[currentFrame].insertName && (
+                    <input
+                        type="text"
+                        id="name"
+                        value={name}
+                        onChange={handleNameChange}
+                        className="name-input"
+                        placeholder="Enter your name (e.g., Andre G)"
+                        style={{ marginTop: "1rem" }}
+                    />
+                )}
 
                 {/* Navigation Buttons */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '300px', margin: '0 auto' , gap : "1rem"}}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '300px', margin: '0 auto', gap: '1rem' }}>
                     <Button className="bigGreenButton" type="primary" disabled={currentFrame === 0} onClick={handleBack}>
                         <CaretLeftOutlined /> Back
                     </Button>
@@ -113,8 +117,6 @@ function Introduction() {
                         Next <CaretRightOutlined />
                     </Button>
                 </div>
-
-
             </div>
         </div>
     );
