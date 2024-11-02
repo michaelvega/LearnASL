@@ -1,15 +1,26 @@
-import React, { useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import * as math from 'mathjs';
 import { SingularValueDecomposition } from 'ml-matrix';
+import tutorialimg from "../../assets/tutorials/exampletutorial.png"
 
 function HandTracking() {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const canvasRefWhite = useRef(null);
     const [cameraStarted, setCameraStarted] = useState(false);
-
     const [videoWidth, setVideoWidth] = useState(640);
     const [videoHeight, setVideoHeight] = useState(480);
+
+    // **Add this state variable for the "Help Me!" checkbox**
+    const [helpMe, setHelpMe] = useState(false);
+
+    // **Add this ref to keep track of the latest helpMe value**
+    const helpMeRef = useRef(helpMe);
+
+    // **Add this useEffect to update the ref whenever helpMe changes**
+    useEffect(() => {
+        helpMeRef.current = helpMe;
+    }, [helpMe]);
+
 
     const archetypeLandmarks = [
         [0.653939, 0.736845, 0.0],
@@ -61,7 +72,6 @@ function HandTracking() {
 
     const startCamera = () => {
         setCameraStarted(true);
-
         const videoElement = videoRef.current;
         const canvasElement = canvasRef.current;
         const canvasCtx = canvasElement.getContext('2d');
@@ -79,7 +89,7 @@ function HandTracking() {
             minTrackingConfidence: 0.5,
         });
 
-        hands.onResults((results) => onResults(results, canvasCtx, canvasElement));
+        hands.onResults(onResultsWrapper);
 
         const camera = new window.Camera(videoElement, {
             onFrame: async () => {
@@ -141,7 +151,7 @@ function HandTracking() {
         for (let i = 0; i < landmarks.length; i++) {
             const [x, y] = landmarks[i];
             canvasCtx.beginPath();
-            canvasCtx.arc(x, y, 15, 0, 2 * Math.PI);
+            canvasCtx.arc(x, y, 7, 0, 2 * Math.PI);
             canvasCtx.fillStyle = colors[i];
             canvasCtx.fill();
         }
@@ -157,20 +167,25 @@ function HandTracking() {
             canvasCtx.moveTo(start[0], start[1]);
             canvasCtx.lineTo(end[0], end[1]);
             canvasCtx.strokeStyle = color;
-            canvasCtx.lineWidth = 6; // change linewidth
+            canvasCtx.lineWidth = 2; // change linewidth
             canvasCtx.stroke();
         }
     }
 
-    function onResults(results, canvasCtx, canvasElement) {
-        const canvasWhiteElement = canvasRefWhite.current;
-        const canvasWhiteCtx = canvasWhiteElement.getContext('2d');
+    const onResultsWrapper = (results) => {
+        const canvasElement = canvasRef.current;
+        const canvasCtx = canvasElement.getContext('2d');
 
+        if (helpMeRef.current) {
+            onResultsHelpMe(results, canvasCtx, canvasElement);
+        } else {
+            onResultsNoHelp(results, canvasCtx, canvasElement);
+        }
+    };
+
+    function onResultsHelpMe(results, canvasCtx, canvasElement) {
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-
-        canvasWhiteCtx.save();
-        canvasWhiteCtx.clearRect(0, 0, canvasWhiteElement.width, canvasWhiteElement.height);
 
         if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
             const handLandmarks = results.multiHandLandmarks[0];
@@ -181,9 +196,6 @@ function HandTracking() {
 
             canvasElement.width = videoWidth;
             canvasElement.height = videoHeight;
-
-            canvasWhiteElement.height = videoHeight;
-            canvasWhiteElement.width = videoHeight; // For aspect ratio 1:1
 
             const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
             const archetypeLandmarks3D = mapLandmarksTo3D(archetypeLandmarks, videoWidth, videoHeight);
@@ -204,26 +216,18 @@ function HandTracking() {
             // Compute characteristic hand length (length of the middle finger)
             const baseIndex = 9; // Middle_Finger_MCP
             const tipIndex = 12; // Middle_Finger_Tip
-
             const handLengthVector = math.subtract(userLandmarks3D[tipIndex], userLandmarks3D[baseIndex]);
             const handLength = math.norm(handLengthVector);
-
-            // Normalize distances by hand length
             const normalizedDistances = distances.map((d) => d / handLength);
-
-            // Compute RMSE using normalized distances
             const rmse = Math.sqrt(math.mean(normalizedDistances.map((d) => d * d)));
 
             console.log(`RMSE: ${rmse.toFixed(4)}`);
 
-            // Adjusted thresholds for normalized distances
-            const anomalyThreshold = 0.2; // 20% of hand length
-            const rmseThreshold = 0.19; // 20% of hand length
-            const maxRmse = 0.5; // Maximum RMSE for color mapping (50% of hand length)
+            const anomalyThreshold = 0.2;
+            const rmseThreshold = 0.19;
+            const maxRmse = 0.5;
 
             const feedbackDict = {};
-
-            // Create an array to store colors for each landmark
             const landmarkColors = [];
 
             for (let i = 0; i < normalizedDistances.length; i++) {
@@ -242,20 +246,19 @@ function HandTracking() {
 
                     if (maxDiff === diffX) {
                         action = givenCoord[0] > archetypeCoord[0] ? `move ${landmarkName} left` : `move ${landmarkName} right`;
+                        landmarkColors[i] = 'yellow';
                     } else if (maxDiff === diffY) {
                         action = givenCoord[1] > archetypeCoord[1] ? `move ${landmarkName} up` : `move ${landmarkName} down`;
+                        landmarkColors[i] = 'yellow';
                     } else {
                         action = givenCoord[2] > archetypeCoord[2] ? `move ${landmarkName} forward` : `move ${landmarkName} backward`;
+                        landmarkColors[i] = "skyblue";
                     }
 
                     feedbackDict[landmarkName] = action;
 
-                    // Set color to yellow for anomalous landmarks
-                    landmarkColors[i] = 'yellow';
                 } else {
                     feedbackDict[landmarkName] = 'no anomalies detected';
-
-                    // Set color to default blue for normal landmarks
                     landmarkColors[i] = 'rgba(30, 136, 229, 0.7)';
                 }
             }
@@ -263,7 +266,6 @@ function HandTracking() {
             console.log(JSON.stringify(feedbackDict, null, 2));
 
             // Draw user's hand landmarks and connections on camera canvas
-
             drawLandmarks(
                 canvasCtx,
                 userLandmarks3D.map(([x, y]) => [x, y]),
@@ -276,212 +278,190 @@ function HandTracking() {
                 'rgba(30, 136, 229, 0.7)'
             );
 
-
-
-            // Draw transformed archetype landmarks and connections on camera canvas
-            //removed
-            /*
-            drawLandmarks(
-                canvasCtx,
-                transformedArchetype3D.map(([x, y]) => [x, y]),
-                'rgba(0, 77, 64, 0.7)'
-            );
-            drawConnections(
-                canvasCtx,
-                transformedArchetype3D.map(([x, y]) => [x, y]),
-                window.HAND_CONNECTIONS,
-                'rgba(0, 77, 64, 0.7)'
-            );
-
-
-
-            // Draw lines between corresponding landmarks on camera canvas
-            for (let i = 0; i < 21; i++) {
-                const start = userLandmarks3D[i];
-                const end = transformedArchetype3D[i];
-
-                const dist = normalizedDistances[i];
-                const colorThreshold = maxRmse; // Use maxRmse for color scaling
-                const cappedDist = Math.min(dist, colorThreshold);
-                const normalizedDist = cappedDist / colorThreshold;
-
-                const red = Math.floor(255 * normalizedDist);
-                const green = Math.floor(255 * (1 - normalizedDist));
-                const color = `rgba(${red}, ${green}, 0, 0.7)`;
-
-                canvasCtx.beginPath();
-                canvasCtx.moveTo(start[0], start[1]);
-                canvasCtx.lineTo(end[0], end[1]);
-                canvasCtx.strokeStyle = color;
-                canvasCtx.lineWidth = 2;
-                canvasCtx.stroke();
-            }
-             */
-
             // Draw bounding rectangle around the user's hand on camera canvas
             const userLandmarks2D = userLandmarks3D.map(([x, y]) => [x, y]);
-
             const xs = userLandmarks2D.map(([x, y]) => x);
             const ys = userLandmarks2D.map(([x, y]) => y);
-
             const minX = Math.min(...xs);
             const maxX = Math.max(...xs);
             const minY = Math.min(...ys);
             const maxY = Math.max(...ys);
 
-            // Cap the RMSE at maxRmse
             const cappedRmse = Math.min(rmse, maxRmse);
             const normalizedRmse = cappedRmse / maxRmse;
-
-            // Determine color based on RMSE
             const rmseRed = Math.floor(255 * normalizedRmse);
             const rmseGreen = Math.floor(255 * (1 - normalizedRmse));
-            const rmseColor = `rgba(${rmseRed}, ${rmseGreen}, 0, 1)`; // Full opacity
+            const rmseColor = `rgba(${rmseRed}, ${rmseGreen}, 0, 1)`;
 
-            // Draw rectangle on camera canvas
             canvasCtx.beginPath();
             canvasCtx.rect(minX, minY, maxX - minX, maxY - minY);
             canvasCtx.strokeStyle = rmseColor;
             canvasCtx.lineWidth = 4;
             canvasCtx.stroke();
 
-            // Determine correctness label
-            let labelText = '';
-            if (rmse < rmseThreshold) {
-                labelText = 'Correct';
-            } else {
-                labelText = 'Incorrect';
-            }
-
-            // Output to console
+            let labelText = rmse < rmseThreshold ? 'Correct' : 'Incorrect';
             console.log(labelText);
 
-            // Put label on the rectangle on camera canvas
             canvasCtx.font = '20px Arial';
             canvasCtx.fillStyle = rmseColor;
             canvasCtx.fillText(labelText, minX, minY - 10);
-
-            // Prepare to draw on the white canvas
-            const allLandmarks = userLandmarks3D;
-            const allXs = allLandmarks.map(([x, y]) => x);
-            const allYs = allLandmarks.map(([x, y]) => y);
-
-            const minAllX = Math.min(...allXs);
-            const maxAllX = Math.max(...allXs);
-            const minAllY = Math.min(...allYs);
-            const maxAllY = Math.max(...allYs);
-
-            const handWidth = maxAllX - minAllX;
-            const handHeight = maxAllY - minAllY;
-
-            const canvasSize = canvasWhiteElement.width; // Since it's square
-
-            const scaleFactor = (canvasSize * 0.8) / Math.max(handWidth, handHeight);
-
-            const offsetX = (canvasSize - handWidth * scaleFactor) / 2 - minAllX * scaleFactor;
-            const offsetY = (canvasSize - handHeight * scaleFactor) / 2 - minAllY * scaleFactor;
-
-            const canvasLandmarksUser = userLandmarks3D.map(([x, y]) => [
-                x * scaleFactor + offsetX,
-                y * scaleFactor + offsetY,
-            ]);
-
-            // no archetype to pull from in new version
-            /*
-            const canvasLandmarksArchetype = transformedArchetype3D.map(([x, y]) => [
-                x * scaleFactor + offsetX,
-                y * scaleFactor + offsetY,
-            ]);
-
-             */
-
-            // Draw user's hand landmarks and connections on white canvas
-            drawLandmarks(
-                canvasWhiteCtx,
-                canvasLandmarksUser,
-                landmarkColors
-            );
-            drawConnections(
-                canvasWhiteCtx,
-                canvasLandmarksUser,
-                window.HAND_CONNECTIONS,
-                'rgba(30, 136, 229, 0.7)'
-            );
-
-            // Draw transformed archetype landmarks and connections on white canvas
-            // removed
-            /*
-            drawLandmarks(
-                canvasWhiteCtx,
-                canvasLandmarksArchetype,
-                'rgba(0, 77, 64, 0.7)'
-            );
-            drawConnections(
-                canvasWhiteCtx,
-                canvasLandmarksArchetype,
-                window.HAND_CONNECTIONS,
-                'rgba(0, 77, 64, 0.7)'
-            );
-
-            // Draw lines between corresponding landmarks on white canvas
-            for (let i = 0; i < 21; i++) {
-                const start = canvasLandmarksUser[i];
-                const end = canvasLandmarksArchetype[i];
-
-                const dist = normalizedDistances[i];
-                const colorThreshold = maxRmse; // Use maxRmse for color scaling
-                const cappedDist = Math.min(dist, colorThreshold);
-                const normalizedDist = cappedDist / colorThreshold;
-
-                const red = Math.floor(255 * normalizedDist);
-                const green = Math.floor(255 * (1 - normalizedDist));
-                const color = `rgba(${red}, ${green}, 0, 0.7)`;
-
-                canvasWhiteCtx.beginPath();
-                canvasWhiteCtx.moveTo(start[0], start[1]);
-                canvasWhiteCtx.lineTo(end[0], end[1]);
-                canvasWhiteCtx.strokeStyle = color;
-                canvasWhiteCtx.lineWidth = 2;
-                canvasWhiteCtx.stroke();
-            }
-
-             */
         }
 
         canvasCtx.restore();
-        canvasWhiteCtx.restore();
     }
+
+    function onResultsNoHelp(results, canvasCtx, canvasElement) {
+        canvasCtx.save();
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+        if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+            const handLandmarks = results.multiHandLandmarks[0];
+            const landmarks = handLandmarks.map((lm) => [lm.x, lm.y, lm.z]);
+
+            const videoWidth = videoRef.current.videoWidth;
+            const videoHeight = videoRef.current.videoHeight;
+
+            canvasElement.width = videoWidth;
+            canvasElement.height = videoHeight;
+
+            const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
+            const archetypeLandmarks3D = mapLandmarksTo3D(archetypeLandmarks, videoWidth, videoHeight);
+
+            // Compute the similarity transformation
+            const { s, R, t } = computeSimilarityTransform(archetypeLandmarks3D, userLandmarks3D);
+
+            // Transform the archetype landmarks
+            const transformedArchetype3D = archetypeLandmarks3D.map((point) => {
+                return math.add(math.multiply(s, math.multiply(point, R)), t);
+            });
+
+            // Compute distances between corresponding landmarks
+            const distances = userLandmarks3D.map((point, idx) => {
+                return math.norm(math.subtract(point, transformedArchetype3D[idx]));
+            });
+
+            // Compute characteristic hand length (length of the middle finger)
+            const baseIndex = 9; // Middle_Finger_MCP
+            const tipIndex = 12; // Middle_Finger_Tip
+            const handLengthVector = math.subtract(userLandmarks3D[tipIndex], userLandmarks3D[baseIndex]);
+            const handLength = math.norm(handLengthVector);
+            const normalizedDistances = distances.map((d) => d / handLength);
+            const rmse = Math.sqrt(math.mean(normalizedDistances.map((d) => d * d)));
+
+            console.log(`RMSE: ${rmse.toFixed(4)}`);
+
+            const anomalyThreshold = 0.2;
+            const rmseThreshold = 0.19;
+            const maxRmse = 0.5;
+
+            const feedbackDict = {};
+            const landmarkColors = [];
+
+            for (let i = 0; i < normalizedDistances.length; i++) {
+                const dist = normalizedDistances[i];
+                const landmarkName = landmarkNames[i] || `Landmark_${i}`;
+                const givenCoord = userLandmarks3D[i];
+                const archetypeCoord = transformedArchetype3D[i];
+
+                if (dist > anomalyThreshold) {
+                    const diffX = Math.abs(givenCoord[0] - archetypeCoord[0]);
+                    const diffY = Math.abs(givenCoord[1] - archetypeCoord[1]);
+                    const diffZ = Math.abs(givenCoord[2] - archetypeCoord[2]);
+
+                    const maxDiff = Math.max(diffX, diffY, diffZ);
+                    let action = '';
+
+                    if (maxDiff === diffX) {
+                        action = givenCoord[0] > archetypeCoord[0] ? `move ${landmarkName} left` : `move ${landmarkName} right`;
+                        landmarkColors[i] = 'yellow';
+                    } else if (maxDiff === diffY) {
+                        action = givenCoord[1] > archetypeCoord[1] ? `move ${landmarkName} up` : `move ${landmarkName} down`;
+                        landmarkColors[i] = 'yellow';
+                    } else {
+                        action = givenCoord[2] > archetypeCoord[2] ? `move ${landmarkName} forward` : `move ${landmarkName} backward`;
+                        landmarkColors[i] = "skyblue";
+                    }
+
+                    feedbackDict[landmarkName] = action;
+
+                } else {
+                    feedbackDict[landmarkName] = 'no anomalies detected';
+                    landmarkColors[i] = 'rgba(30, 136, 229, 0.7)';
+                }
+            }
+
+            console.log(JSON.stringify(feedbackDict, null, 2));
+
+
+            // Draw bounding rectangle around the user's hand on camera canvas
+            const userLandmarks2D = userLandmarks3D.map(([x, y]) => [x, y]);
+            const xs = userLandmarks2D.map(([x, y]) => x);
+            const ys = userLandmarks2D.map(([x, y]) => y);
+            const minX = Math.min(...xs);
+            const maxX = Math.max(...xs);
+            const minY = Math.min(...ys);
+            const maxY = Math.max(...ys);
+
+            const cappedRmse = Math.min(rmse, maxRmse);
+            const normalizedRmse = cappedRmse / maxRmse;
+            const rmseRed = Math.floor(255 * normalizedRmse);
+            const rmseGreen = Math.floor(255 * (1 - normalizedRmse));
+            const rmseColor = `rgba(${rmseRed}, ${rmseGreen}, 0, 1)`;
+
+            canvasCtx.beginPath();
+            canvasCtx.rect(minX, minY, maxX - minX, maxY - minY);
+            canvasCtx.strokeStyle = rmseColor;
+            canvasCtx.lineWidth = 4;
+            canvasCtx.stroke();
+
+            let labelText = rmse < rmseThreshold ? 'Correct' : 'Incorrect';
+            console.log(labelText);
+
+            canvasCtx.font = '20px Arial';
+            canvasCtx.fillStyle = rmseColor;
+            canvasCtx.fillText(labelText, minX, minY - 10);
+        }
+
+        canvasCtx.restore();
+    }
+
+
 
     return (
         <>
             <button onClick={startCamera}>Start Camera</button>
-            <div style={{ display: 'flex' }}>
-                <div style={{ position: 'relative' }}>
-                    <video
-                        ref={videoRef}
-                        style={{
-                            display: cameraStarted ? 'block' : 'none',
-                            width: videoWidth,
-                            height: videoHeight,
-                        }}
-                    ></video>
-                    <canvas
-                        ref={canvasRef}
-                        width={videoWidth}
-                        height={videoHeight}
-                        style={{ position: 'absolute', top: 0, left: 0 }}
-                    />
-                </div>
-                <canvas
-                    ref={canvasRefWhite}
-                    width={videoHeight}
-                    height={videoHeight}
+
+            <div style={{ position: 'relative' }}>
+                <video
+                    ref={videoRef}
                     style={{
-                        backgroundColor: 'white',
-                        border: '1px solid black',
+                        display: cameraStarted ? 'block' : 'none',
+                        width: videoWidth,
+                        height: videoHeight,
                     }}
+                ></video>
+                <canvas
+                    ref={canvasRef}
+                    width={videoWidth}
+                    height={videoHeight}
+                    style={{ position: 'absolute', top: 0, left: 0 }}
                 />
             </div>
+
+            {/* **Add the checkbox below the video canvas**  do the flex later*/}
+            {cameraStarted && (
+                <div style={{ marginTop: '10px' }}>
+                    <label style={{ display: "flex", flexDirection: "row" }}>
+                        <input
+                            type="checkbox"
+                            checked={helpMe}
+                            style={{ boxShadow: "none" }}
+                            onChange={(e) => setHelpMe(e.target.checked)}
+                        />
+                        Help Me!
+                    </label>
+                </div>
+            )}
         </>
     );
 }
