@@ -264,7 +264,7 @@ function HandTracking() {
 
             // Draw user's hand landmarks and connections on camera canvas
             //remove
-            /*
+
             drawLandmarks(
                 canvasCtx,
                 userLandmarks3D.map(([x, y]) => [x, y]),
@@ -277,7 +277,7 @@ function HandTracking() {
                 'rgba(30, 136, 229, 0.7)'
             );
 
-             */
+
 
             // Draw transformed archetype landmarks and connections on camera canvas
             //removed
