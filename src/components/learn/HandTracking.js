@@ -5,7 +5,11 @@ import { SingularValueDecomposition } from 'ml-matrix';
 function HandTracking() {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
+    const canvasRefWhite = useRef(null);
     const [cameraStarted, setCameraStarted] = useState(false);
+
+    const [videoWidth, setVideoWidth] = useState(640);
+    const [videoHeight, setVideoHeight] = useState(480);
 
     const archetypeLandmarks = [
         [0.653939, 0.736845, 0.0],
@@ -86,6 +90,12 @@ function HandTracking() {
         });
 
         camera.start();
+
+        // Update video dimensions when metadata is loaded
+        videoElement.onloadedmetadata = () => {
+            setVideoWidth(videoElement.videoWidth);
+            setVideoHeight(videoElement.videoHeight);
+        };
     };
 
     function mapLandmarksTo3D(landmarks, imageWidth, imageHeight) {
@@ -127,12 +137,12 @@ function HandTracking() {
         return { s, R, t };
     }
 
-    function drawLandmarks(canvasCtx, landmarks, color) {
+    function drawLandmarks(canvasCtx, landmarks, colors) {
         for (let i = 0; i < landmarks.length; i++) {
             const [x, y] = landmarks[i];
             canvasCtx.beginPath();
-            canvasCtx.arc(x, y, 5, 0, 2 * Math.PI);
-            canvasCtx.fillStyle = color;
+            canvasCtx.arc(x, y, 15, 0, 2 * Math.PI);
+            canvasCtx.fillStyle = colors[i];
             canvasCtx.fill();
         }
     }
@@ -147,14 +157,20 @@ function HandTracking() {
             canvasCtx.moveTo(start[0], start[1]);
             canvasCtx.lineTo(end[0], end[1]);
             canvasCtx.strokeStyle = color;
-            canvasCtx.lineWidth = 2;
+            canvasCtx.lineWidth = 6; // change linewidth
             canvasCtx.stroke();
         }
     }
 
     function onResults(results, canvasCtx, canvasElement) {
+        const canvasWhiteElement = canvasRefWhite.current;
+        const canvasWhiteCtx = canvasWhiteElement.getContext('2d');
+
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+        canvasWhiteCtx.save();
+        canvasWhiteCtx.clearRect(0, 0, canvasWhiteElement.width, canvasWhiteElement.height);
 
         if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
             const handLandmarks = results.multiHandLandmarks[0];
@@ -165,6 +181,9 @@ function HandTracking() {
 
             canvasElement.width = videoWidth;
             canvasElement.height = videoHeight;
+
+            canvasWhiteElement.height = videoHeight;
+            canvasWhiteElement.width = videoHeight; // For aspect ratio 1:1
 
             const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
             const archetypeLandmarks3D = mapLandmarksTo3D(archetypeLandmarks, videoWidth, videoHeight);
@@ -197,13 +216,15 @@ function HandTracking() {
 
             console.log(`RMSE: ${rmse.toFixed(4)}`);
 
-            //random
             // Adjusted thresholds for normalized distances
             const anomalyThreshold = 0.2; // 20% of hand length
             const rmseThreshold = 0.19; // 20% of hand length
             const maxRmse = 0.5; // Maximum RMSE for color mapping (50% of hand length)
 
             const feedbackDict = {};
+
+            // Create an array to store colors for each landmark
+            const landmarkColors = [];
 
             for (let i = 0; i < normalizedDistances.length; i++) {
                 const dist = normalizedDistances[i];
@@ -228,18 +249,26 @@ function HandTracking() {
                     }
 
                     feedbackDict[landmarkName] = action;
+
+                    // Set color to yellow for anomalous landmarks
+                    landmarkColors[i] = 'yellow';
                 } else {
                     feedbackDict[landmarkName] = 'no anomalies detected';
+
+                    // Set color to default blue for normal landmarks
+                    landmarkColors[i] = 'rgba(30, 136, 229, 0.7)';
                 }
             }
 
             console.log(JSON.stringify(feedbackDict, null, 2));
 
-            // Draw user's hand landmarks and connections
+            // Draw user's hand landmarks and connections on camera canvas
+            //remove
+            /*
             drawLandmarks(
                 canvasCtx,
                 userLandmarks3D.map(([x, y]) => [x, y]),
-                'rgba(30, 136, 229, 0.7)'
+                landmarkColors
             );
             drawConnections(
                 canvasCtx,
@@ -248,7 +277,11 @@ function HandTracking() {
                 'rgba(30, 136, 229, 0.7)'
             );
 
-            // Draw transformed archetype landmarks and connections
+             */
+
+            // Draw transformed archetype landmarks and connections on camera canvas
+            //removed
+            /*
             drawLandmarks(
                 canvasCtx,
                 transformedArchetype3D.map(([x, y]) => [x, y]),
@@ -261,7 +294,9 @@ function HandTracking() {
                 'rgba(0, 77, 64, 0.7)'
             );
 
-            // Draw lines between corresponding landmarks
+
+
+            // Draw lines between corresponding landmarks on camera canvas
             for (let i = 0; i < 21; i++) {
                 const start = userLandmarks3D[i];
                 const end = transformedArchetype3D[i];
@@ -282,8 +317,9 @@ function HandTracking() {
                 canvasCtx.lineWidth = 2;
                 canvasCtx.stroke();
             }
+             */
 
-            // Draw bounding rectangle around the user's hand
+            // Draw bounding rectangle around the user's hand on camera canvas
             const userLandmarks2D = userLandmarks3D.map(([x, y]) => [x, y]);
 
             const xs = userLandmarks2D.map(([x, y]) => x);
@@ -303,7 +339,7 @@ function HandTracking() {
             const rmseGreen = Math.floor(255 * (1 - normalizedRmse));
             const rmseColor = `rgba(${rmseRed}, ${rmseGreen}, 0, 1)`; // Full opacity
 
-            // Draw rectangle
+            // Draw rectangle on camera canvas
             canvasCtx.beginPath();
             canvasCtx.rect(minX, minY, maxX - minX, maxY - minY);
             canvasCtx.strokeStyle = rmseColor;
@@ -321,21 +357,131 @@ function HandTracking() {
             // Output to console
             console.log(labelText);
 
-            // Put label on the rectangle
+            // Put label on the rectangle on camera canvas
             canvasCtx.font = '20px Arial';
             canvasCtx.fillStyle = rmseColor;
             canvasCtx.fillText(labelText, minX, minY - 10);
+
+            // Prepare to draw on the white canvas
+            const allLandmarks = userLandmarks3D;
+            const allXs = allLandmarks.map(([x, y]) => x);
+            const allYs = allLandmarks.map(([x, y]) => y);
+
+            const minAllX = Math.min(...allXs);
+            const maxAllX = Math.max(...allXs);
+            const minAllY = Math.min(...allYs);
+            const maxAllY = Math.max(...allYs);
+
+            const handWidth = maxAllX - minAllX;
+            const handHeight = maxAllY - minAllY;
+
+            const canvasSize = canvasWhiteElement.width; // Since it's square
+
+            const scaleFactor = (canvasSize * 0.8) / Math.max(handWidth, handHeight);
+
+            const offsetX = (canvasSize - handWidth * scaleFactor) / 2 - minAllX * scaleFactor;
+            const offsetY = (canvasSize - handHeight * scaleFactor) / 2 - minAllY * scaleFactor;
+
+            const canvasLandmarksUser = userLandmarks3D.map(([x, y]) => [
+                x * scaleFactor + offsetX,
+                y * scaleFactor + offsetY,
+            ]);
+
+            // no archetype to pull from in new version
+            /*
+            const canvasLandmarksArchetype = transformedArchetype3D.map(([x, y]) => [
+                x * scaleFactor + offsetX,
+                y * scaleFactor + offsetY,
+            ]);
+
+             */
+
+            // Draw user's hand landmarks and connections on white canvas
+            drawLandmarks(
+                canvasWhiteCtx,
+                canvasLandmarksUser,
+                landmarkColors
+            );
+            drawConnections(
+                canvasWhiteCtx,
+                canvasLandmarksUser,
+                window.HAND_CONNECTIONS,
+                'rgba(30, 136, 229, 0.7)'
+            );
+
+            // Draw transformed archetype landmarks and connections on white canvas
+            // removed
+            /*
+            drawLandmarks(
+                canvasWhiteCtx,
+                canvasLandmarksArchetype,
+                'rgba(0, 77, 64, 0.7)'
+            );
+            drawConnections(
+                canvasWhiteCtx,
+                canvasLandmarksArchetype,
+                window.HAND_CONNECTIONS,
+                'rgba(0, 77, 64, 0.7)'
+            );
+
+            // Draw lines between corresponding landmarks on white canvas
+            for (let i = 0; i < 21; i++) {
+                const start = canvasLandmarksUser[i];
+                const end = canvasLandmarksArchetype[i];
+
+                const dist = normalizedDistances[i];
+                const colorThreshold = maxRmse; // Use maxRmse for color scaling
+                const cappedDist = Math.min(dist, colorThreshold);
+                const normalizedDist = cappedDist / colorThreshold;
+
+                const red = Math.floor(255 * normalizedDist);
+                const green = Math.floor(255 * (1 - normalizedDist));
+                const color = `rgba(${red}, ${green}, 0, 0.7)`;
+
+                canvasWhiteCtx.beginPath();
+                canvasWhiteCtx.moveTo(start[0], start[1]);
+                canvasWhiteCtx.lineTo(end[0], end[1]);
+                canvasWhiteCtx.strokeStyle = color;
+                canvasWhiteCtx.lineWidth = 2;
+                canvasWhiteCtx.stroke();
+            }
+
+             */
         }
 
         canvasCtx.restore();
+        canvasWhiteCtx.restore();
     }
 
     return (
         <>
             <button onClick={startCamera}>Start Camera</button>
-            <div style={{ position: 'relative' }}>
-                <video ref={videoRef} style={{ display: cameraStarted ? 'block' : 'none' }}></video>
-                <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0 }} />
+            <div style={{ display: 'flex' }}>
+                <div style={{ position: 'relative' }}>
+                    <video
+                        ref={videoRef}
+                        style={{
+                            display: cameraStarted ? 'block' : 'none',
+                            width: videoWidth,
+                            height: videoHeight,
+                        }}
+                    ></video>
+                    <canvas
+                        ref={canvasRef}
+                        width={videoWidth}
+                        height={videoHeight}
+                        style={{ position: 'absolute', top: 0, left: 0 }}
+                    />
+                </div>
+                <canvas
+                    ref={canvasRefWhite}
+                    width={videoHeight}
+                    height={videoHeight}
+                    style={{
+                        backgroundColor: 'white',
+                        border: '1px solid black',
+                    }}
+                />
             </div>
         </>
     );
