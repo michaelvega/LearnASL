@@ -4,6 +4,7 @@ import "./Learn.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Progress } from "antd";
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
+import WordList from "../worldList/WordList";
 
 import HandTracking from "./HandTracking";
 import Tutorial from "../tutorial/Tutorial";
@@ -38,6 +39,14 @@ function Learn() {
         }
     };
 
+    const wordData = WordList.find((item) => item.id === parseInt(wordID));
+
+    if (!wordData) {
+        return <div>Content not found.</div>;
+    }
+
+    const { title, name, instructions, numpyFrames, image } = wordData;
+
     return (
         <div className="wrapperLearn">
             <div className="verticalWrapperLearn">
@@ -57,11 +66,16 @@ function Learn() {
                 <h1>Learn!</h1>
                 <div className="learnContentWrapper">
                     <div className="componentContainerLearn">
+                        <div>
                         {currentIndex === 0 ? (
                             <Tutorial wordID={wordID} /> // Pass wordID as a prop to Tutorial
                         ) : (
                             <HandTracking wordID={wordID} /> // Pass wordID as a prop to HandTracking
                         )}
+                        </div>
+
+                        {components[currentIndex].label == "Hand Tracking" && <img className = "exampleImg" src = {image}></img>}
+
                     </div>
                 </div>
 

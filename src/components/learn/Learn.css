@@ -4,7 +4,7 @@
     align-items: center;
 }
 
-.learnContentWrapper {
+.componentContainerLearn {
     display: flex;
     flex-direction: row;
     align-items: center;
