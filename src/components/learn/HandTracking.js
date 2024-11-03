@@ -1,50 +1,51 @@
 import React, {useEffect, useRef, useState} from 'react';
 import * as math from 'mathjs';
 import { SingularValueDecomposition } from 'ml-matrix';
-import tutorialimg from "../../assets/tutorials/exampletutorial.png"
+import WordList from "../worldList/WordList";
 
-function HandTracking() {
+
+function HandTracking({ wordID }) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [cameraStarted, setCameraStarted] = useState(false);
     const [videoWidth, setVideoWidth] = useState(640);
     const [videoHeight, setVideoHeight] = useState(480);
-
-    // **Add this state variable for the "Help Me!" checkbox**
+    const [archetypeLandmarks, setArchetypeLandmarks] = useState([]);
     const [helpMe, setHelpMe] = useState(false);
-
-    // **Add this ref to keep track of the latest helpMe value**
     const helpMeRef = useRef(helpMe);
 
-    // **Add this useEffect to update the ref whenever helpMe changes**
     useEffect(() => {
         helpMeRef.current = helpMe;
     }, [helpMe]);
 
+    // Find the numpy txt file for the specified wordID
+    useEffect(() => {
+        const wordData = WordList.find(item => item.id === parseInt(wordID));
+        if (wordData && wordData.numpyFrames && wordData.numpyFrames[0]) {
+            fetch(wordData.numpyFrames[0]) // Fetch the txt file URL
+                .then(response => response.text())
+                .then(text => {
+                    // Parse the text into the desired array format
+                    const parsedData = text.trim().split('\n')
+                        .map(line => {
+                            const values = line.trim().split(/\s+/).map(Number);
+                            return values.includes(NaN) || values.length !== 3 ? null : values;
+                        })
+                        .filter(item => item !== null) // Remove any invalid entries (e.g., lines with NaN)
+                        .slice(0, 21); // Ensure we only have 21 landmarks
 
-    const archetypeLandmarks = [
-        [0.653939, 0.736845, 0.0],
-        [0.620232, 0.702711, -0.023916],
-        [0.606988, 0.630678, -0.031711],
-        [0.634047, 0.574532, -0.038475],
-        [0.665877, 0.540703, -0.043347],
-        [0.609774, 0.544269, -0.011957],
-        [0.616449, 0.460663, -0.027161],
-        [0.623161, 0.408393, -0.037359],
-        [0.628754, 0.360929, -0.044632],
-        [0.636111, 0.541012, -0.011434],
-        [0.62861, 0.449295, -0.025945],
-        [0.621653, 0.404544, -0.031255],
-        [0.618312, 0.365748, -0.032888],
-        [0.660863, 0.55784, -0.015157],
-        [0.6627, 0.515852, -0.040712],
-        [0.653424, 0.57338, -0.040603],
-        [0.649805, 0.606964, -0.033096],
-        [0.683831, 0.585941, -0.021406],
-        [0.678671, 0.562223, -0.043711],
-        [0.664997, 0.601167, -0.044712],
-        [0.659526, 0.62423, -0.040571],
-    ];
+                    // Check if we got exactly 21 points
+                    if (parsedData.length === 21) {
+                        setArchetypeLandmarks(parsedData);
+                        console.log("Parsed archetype landmarks:", parsedData);
+                    } else {
+                        console.error("Error: Expected 21 points, but got", parsedData.length);
+                    }
+                })
+                .catch(error => console.error("Error loading landmarks:", error));
+        }
+    }, [wordID]);
+
 
     const landmarkNames = {
         0: 'Wrist',

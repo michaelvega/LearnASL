@@ -84,10 +84,9 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/landing" element={<Landing />} />
           <Route path="/introduction" element={<Introduction />} />
-          <Route path="/learn" element={<Learn/>} />
-          <Route path="/tutorial" element={<Tutorial/>} />
-          <Route path="/navigation" element = {<Navigation/>} />
-          <Route path="/introduceYourself" element= {<IntroduceYourself/>} />
+          <Route path="/learn/:wordID" element={<Learn />} />
+          <Route path="/navigation" element={<Navigation />} />
+          <Route path="/introduceYourself" element={<IntroduceYourself />} />
         </Routes>
       </div>
   )
