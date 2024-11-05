@@ -1,0 +1,14 @@
+/* ToggleAI.css */
+
+.button-container {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: red;
+}
+
+.toggle-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}

@@ -10,6 +10,7 @@ import IntroduceYourself from './components/introduceYourself/IntroduceYourself'
 import Hands from "./components/learn/HandTracking";
 import HandGestureComparison from "./components/learn/HandTracking";
 import Tutorial from "./components/tutorial/Tutorial";
+import DropDownHelp from "./components/dropdownhelp/DropDownHelp";
 
 
 
@@ -87,6 +88,7 @@ function App() {
           <Route path="/learn/:wordID" element={<Learn />} />
           <Route path="/navigation" element={<Navigation />} />
           <Route path="/introduceYourself" element={<IntroduceYourself />} />
+          <Route path={"/dropdown"} element={<DropDownHelp/>} />
         </Routes>
       </div>
   )
