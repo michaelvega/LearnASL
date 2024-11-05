@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import './DropDownHelp.css';
-import { useHandTracking } from '../handtrackingstate/HandTrackingContext';
-
 
 function DropDownHelp() {
     const [isAIEnabled, setIsAIEnabled] = useState(false);
-    const { correctionData, isDetecting, wordDataContext } = useHandTracking();
 
     return (
         <div className="button-container">

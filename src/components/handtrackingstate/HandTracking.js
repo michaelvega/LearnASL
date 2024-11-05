@@ -2,13 +2,13 @@ import React, {useEffect, useRef, useState} from 'react';
 import * as math from 'mathjs';
 import { SingularValueDecomposition } from 'ml-matrix';
 import WordList from "../worldList/WordList";
-import { useHandTracking } from '../handtrackingstate/HandTrackingContext'; // Import the custom hook
-
 
 function HandTracking({ wordID }) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const { isDetecting, setIsDetecting, correctionData, setCorrectionData, wordDataContext, setWordDataContext } = useHandTracking();
+    const [isDetecting, setIsDetecting] = useState(false);
+    const [correctionData, setCorrectionData] = useState({}); // JSON with all corrections
+    const [wordDataContext, setWordDataContext] = useState({});
     const [cameraStarted, setCameraStarted] = useState(false);
     const [videoWidth, setVideoWidth] = useState(640);
     const [videoHeight, setVideoHeight] = useState(480);
