@@ -29,7 +29,7 @@ function Landing() {
 
             <div className = "hero">
                 <div className = "heroText">
-                    <h1>FAST, FUN, AND PERCISE SIGN LANGUAGE LEARNING</h1>
+                    <h1>FAST, FUN, AND PRECISE SIGN LANGUAGE LEARNING</h1>
                     <p>LearnASL.org is an AI-Driven educational platform that  
                         <b> enhances</b> the american sign language learning process, 
                         by giving helpful <b> and real-time feedback.</b></p>
