@@ -16,6 +16,45 @@ function HandTracking({ wordID }) {
     const [helpMe, setHelpMe] = useState(false);
     const helpMeRef = useRef(helpMe);
 
+    async function fetchCorrectionAdvice() {
+            const prompt = `
+            Look at the American Sign Language Data Below. The user is trying to sign this sign. 
+            ${JSON.stringify(wordDataContext, null, 2)}
+        
+            Now look at the correction data JSON below. 
+            ${JSON.stringify(correctionData, null, 2)}
+        
+            This maps every joint and hand feature captured by MediaPipe to see how the user needs to move their hand and fingers in order to sign correctly. Using this JSON, identify common mistakes for this sign and, in a couple sentences, suggest something the user could do differently with their data. Spell out joint names entirely (for example, thumb_mcp is really the bottom joint of the thumb).
+        `;
+        
+            try {
+                const response = await fetch("https://api.openai.com/v1/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer YOURAPIKEY` // Replace with your API key 3
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-3.5-turbo",
+                        prompt: prompt,
+                        max_tokens: 200,
+                        temperature: 0.7
+                    })
+                });
+        
+                if (!response.ok) throw new Error("Failed to fetch correction advice");
+        
+                const data = await response.json();
+                const advice = data.choices[0].text.trim();
+                console.log("Correction advice:", advice);
+        
+                // You might want to save the advice in a state variable to display it in the UI
+                // setAdvice(advice); // Uncomment if you create a state variable for advice
+            } catch (error) {
+                console.error("Error fetching correction advice:", error);
+            }
+        }
+
     useEffect(() => {
         helpMeRef.current = helpMe;
     }, [helpMe]);
