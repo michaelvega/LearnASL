@@ -9,10 +9,11 @@ function DropDownHelp() {
 
     return (
         <div className="button-container">
-            <button className="bigGreenButton" onClick={() => setIsAIEnabled(!isAIEnabled)}>
-                {isAIEnabled ? 'Disable AI' : 'Enable AI'}
+            <p className = "optionsText">Options</p>
+            <button id = "enableAIBtn" className="bigGreenButton" onClick={() => setIsAIEnabled(!isAIEnabled)}>
+                {isAIEnabled ? 'Disable Hand Guide' : 'Enable Hand Guide'}
             </button>
-            <button className="bigGreenButton">
+            <button id = "instructionsBtn" className="bigGreenButton">
                 Give me Instructions!
             </button>
         </div>

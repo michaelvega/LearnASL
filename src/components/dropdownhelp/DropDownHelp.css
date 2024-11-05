@@ -2,13 +2,36 @@
 
 .button-container {
     display: flex;
-    justify-content: space-around;
-    padding: 20px;
-    background-color: red;
+    justify-content: center;
+    align-items: center;
+
+
+    flex-direction: column;
+    padding: 1rem;
+    background-color: var(--secondary);
+
+    width: 15%;
+    max-height: 30%;
+
+    border-radius: 5%;
 }
 
-.toggle-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
+
+#enableAIBtn {
+    font-size: 1rem;
+    background-color: #1A1A1A;
+    color: #D3D3D3;
+    margin-top: 0;
+}
+
+#instructionsBtn {
+    font-size: 1rem;
+    background-color: #1A1A1A;
+    color: #D3D3D3;
+}
+
+.optionsText {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
 }
