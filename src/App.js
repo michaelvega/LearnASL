@@ -7,8 +7,8 @@ import Introduction from "./components/introduction/Introduction";
 import Learn from "./components/learn/Learn";
 import Navigation from "./components/navigation/Navigation"
 import IntroduceYourself from './components/introduceYourself/IntroduceYourself';
-import Hands from "./components/learn/HandTracking";
-import HandGestureComparison from "./components/learn/HandTracking";
+import Hands from "./components/handtrackingstate/HandTracking";
+import HandGestureComparison from "./components/handtrackingstate/HandTracking";
 import Tutorial from "./components/tutorial/Tutorial";
 import DropDownHelp from "./components/dropdownhelp/DropDownHelp";
 

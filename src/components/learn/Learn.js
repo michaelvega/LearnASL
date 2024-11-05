@@ -6,7 +6,7 @@ import { Button, Progress } from "antd";
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 import WordList from "../worldList/WordList";
 
-import HandTracking from "./HandTracking";
+import HandTracking from "../handtrackingstate/HandTracking";
 import Tutorial from "../tutorial/Tutorial";
 
 const components = [

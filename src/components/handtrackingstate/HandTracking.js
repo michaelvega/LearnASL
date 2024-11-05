@@ -2,11 +2,13 @@ import React, {useEffect, useRef, useState} from 'react';
 import * as math from 'mathjs';
 import { SingularValueDecomposition } from 'ml-matrix';
 import WordList from "../worldList/WordList";
+import { useHandTracking } from '../handtrackingstate/HandTrackingContext'; // Import the custom hook
 
 
 function HandTracking({ wordID }) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
+    const { isDetecting, setIsDetecting, correctionData, setCorrectionData, wordDataContext, setWordDataContext } = useHandTracking();
     const [cameraStarted, setCameraStarted] = useState(false);
     const [videoWidth, setVideoWidth] = useState(640);
     const [videoHeight, setVideoHeight] = useState(480);
@@ -21,6 +23,7 @@ function HandTracking({ wordID }) {
     // Find the numpy txt file for the specified wordID
     useEffect(() => {
         const wordData = WordList.find(item => item.id === parseInt(wordID));
+        setWordDataContext(wordData);
         if (wordData && wordData.numpyFrames && wordData.numpyFrames[0]) {
             fetch(wordData.numpyFrames[0]) // Fetch the txt file URL
                 .then(response => response.text())
@@ -176,6 +179,7 @@ function HandTracking({ wordID }) {
     const onResultsWrapper = (results) => {
         const canvasElement = canvasRef.current;
         const canvasCtx = canvasElement.getContext('2d');
+        setIsDetecting(true);
 
         if (helpMeRef.current) {
             onResultsHelpMe(results, canvasCtx, canvasElement);
@@ -264,6 +268,7 @@ function HandTracking({ wordID }) {
                 }
             }
 
+            setCorrectionData(feedbackDict);
             console.log(JSON.stringify(feedbackDict, null, 2));
 
             // Draw user's hand landmarks and connections on camera canvas
@@ -391,6 +396,7 @@ function HandTracking({ wordID }) {
                 }
             }
 
+            setCorrectionData(feedbackDict);
             console.log(JSON.stringify(feedbackDict, null, 2));
 
 

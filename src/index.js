@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {HashRouter} from "react-router-dom";
 import {ConfigProvider} from "antd";
+import {HandTrackingProvider} from "./components/handtrackingstate/HandTrackingContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -20,7 +21,9 @@ root.render(
         }
     }}>
         <HashRouter basename={"/"}>
-            <App />
+            <HandTrackingProvider>
+                <App />
+            </HandTrackingProvider>
         </HashRouter>
     </ConfigProvider>
 
