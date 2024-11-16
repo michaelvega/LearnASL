@@ -17,43 +17,8 @@ function HandTracking({ wordID }) {
     const helpMeRef = useRef(helpMe);
 
     async function fetchCorrectionAdvice() {
-            const prompt = `
-            Look at the American Sign Language Data Below. The user is trying to sign this sign. 
-            ${JSON.stringify(wordDataContext, null, 2)}
-        
-            Now look at the correction data JSON below. 
-            ${JSON.stringify(correctionData, null, 2)}
-        
-            This maps every joint and hand feature captured by MediaPipe to see how the user needs to move their hand and fingers in order to sign correctly. Using this JSON, identify common mistakes for this sign and, in a couple sentences, suggest something the user could do differently with their data. Spell out joint names entirely (for example, thumb_mcp is really the bottom joint of the thumb).
-        `;
-        
-            try {
-                const response = await fetch("https://api.openai.com/v1/completions", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer YOURAPIKEY` // Replace with your API key 3
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-3.5-turbo",
-                        prompt: prompt,
-                        max_tokens: 200,
-                        temperature: 0.7
-                    })
-                });
-        
-                if (!response.ok) throw new Error("Failed to fetch correction advice");
-        
-                const data = await response.json();
-                const advice = data.choices[0].text.trim();
-                console.log("Correction advice:", advice);
-        
-                // You might want to save the advice in a state variable to display it in the UI
-                // setAdvice(advice); // Uncomment if you create a state variable for advice
-            } catch (error) {
-                console.error("Error fetching correction advice:", error);
-            }
-        }
+        return "Hello world!!"
+    }
 
     useEffect(() => {
         helpMeRef.current = helpMe;
@@ -64,29 +29,66 @@ function HandTracking({ wordID }) {
         const wordData = WordList.find(item => item.id === parseInt(wordID));
         setWordDataContext(wordData);
         if (wordData && wordData.numpyFrames && wordData.numpyFrames[0]) {
-            fetch(wordData.numpyFrames[0]) // Fetch the txt file URL
+            const frameUrls = wordData.numpyFrames; // This might have multiple frames
+            const noHands = wordData.noHands || 1;
+
+            // For now, we are only considering the first frame
+            const archetypeUrl = frameUrls[0];
+
+            fetch(archetypeUrl)
                 .then(response => response.text())
                 .then(text => {
-                    // Parse the text into the desired array format
-                    const parsedData = text.trim().split('\n')
-                        .map(line => {
-                            const values = line.trim().split(/\s+/).map(Number);
-                            return values.includes(NaN) || values.length !== 3 ? null : values;
-                        })
-                        .filter(item => item !== null) // Remove any invalid entries (e.g., lines with NaN)
-                        .slice(0, 21); // Ensure we only have 21 landmarks
+                    // Split the text into lines and parse landmarks
+                    const lines = text.trim().split('\n');
 
-                    // Check if we got exactly 21 points
-                    if (parsedData.length === 21) {
-                        setArchetypeLandmarks(parsedData);
-                        console.log("Parsed archetype landmarks:", parsedData);
-                    } else {
-                        console.error("Error: Expected 21 points, but got", parsedData.length);
+                    if (noHands === 1) {
+                        // Parse landmarks for one hand
+                        const parsedData = lines
+                            .map(line => {
+                                const values = line.trim().split(/\s+/).map(Number);
+                                return values.includes(NaN) || values.length !== 3 ? null : values;
+                            })
+                            .filter(item => item !== null)
+                            .slice(0, 21); // Ensure we only have 21 landmarks
+
+                        if (parsedData.length === 21) {
+                            setArchetypeLandmarks([parsedData]); // Wrap in array to keep consistent with two hands
+                            console.log("Parsed archetype landmarks (one hand):", parsedData);
+                        } else {
+                            console.error("Error: Expected 21 points for one hand, but got", parsedData.length);
+                        }
+                    } else if (noHands === 2) {
+                        // Parse landmarks for two hands
+                        const hand1Landmarks = [];
+                        const hand2Landmarks = [];
+                        let currentHand = null;
+
+                        for (let line of lines) {
+                            line = line.trim();
+                            if (line.startsWith('Hand 1')) {
+                                currentHand = hand1Landmarks;
+                            } else if (line.startsWith('Hand 2')) {
+                                currentHand = hand2Landmarks;
+                            } else if (currentHand) {
+                                const values = line.trim().split(/\s+/).map(Number);
+                                if (values.length === 3 && !values.includes(NaN)) {
+                                    currentHand.push(values);
+                                }
+                            }
+                        }
+
+                        if (hand1Landmarks.length === 21 && hand2Landmarks.length === 21) {
+                            setArchetypeLandmarks([hand1Landmarks, hand2Landmarks]);
+                            console.log("Parsed archetype landmarks (two hands):", { hand1Landmarks, hand2Landmarks });
+                        } else {
+                            console.error("Error: Expected 21 points for each hand, but got", hand1Landmarks.length, hand2Landmarks.length);
+                        }
                     }
                 })
                 .catch(error => console.error("Error loading landmarks:", error));
         }
     }, [wordID]);
+
 
 
     const landmarkNames = {
@@ -125,8 +127,11 @@ function HandTracking({ wordID }) {
             },
         });
 
+        // Set maxNumHands based on noHands
+        const maxHands = wordDataContext.noHands || 1; // Default to 1 if undefined
+
         hands.setOptions({
-            maxNumHands: 1,
+            maxNumHands: maxHands,
             modelComplexity: 1,
             minDetectionConfidence: 0.5,
             minTrackingConfidence: 0.5,
@@ -231,245 +236,230 @@ function HandTracking({ wordID }) {
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
+        const videoWidth = videoRef.current.videoWidth;
+        const videoHeight = videoRef.current.videoHeight;
+
+        canvasElement.width = videoWidth;
+        canvasElement.height = videoHeight;
+
         if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-            const handLandmarks = results.multiHandLandmarks[0];
-            const landmarks = handLandmarks.map((lm) => [lm.x, lm.y, lm.z]);
+            const numHandsDetected = results.multiHandLandmarks.length;
+            const numHandsExpected = wordDataContext.noHands || 1;
 
-            const videoWidth = videoRef.current.videoWidth;
-            const videoHeight = videoRef.current.videoHeight;
+            // Limit the processing to the number of hands expected
+            const handsToProcess = Math.min(numHandsDetected, numHandsExpected);
 
-            canvasElement.width = videoWidth;
-            canvasElement.height = videoHeight;
+            for (let handIndex = 0; handIndex < handsToProcess; handIndex++) {
+                const handLandmarks = results.multiHandLandmarks[handIndex];
+                const landmarks = handLandmarks.map((lm) => [lm.x, lm.y, lm.z]);
 
-            const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
-            const archetypeLandmarks3D = mapLandmarksTo3D(archetypeLandmarks, videoWidth, videoHeight);
+                const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
 
-            // Compute the similarity transformation
-            const { s, R, t } = computeSimilarityTransform(archetypeLandmarks3D, userLandmarks3D);
+                // Get the corresponding archetype hand landmarks
+                const archetypeHandLandmarks = archetypeLandmarks[handIndex];
+                const archetypeLandmarks3D = mapLandmarksTo3D(archetypeHandLandmarks, videoWidth, videoHeight);
 
-            // Transform the archetype landmarks
-            const transformedArchetype3D = archetypeLandmarks3D.map((point) => {
-                return math.add(math.multiply(s, math.multiply(point, R)), t);
-            });
+                // Compute the similarity transformation
+                const { s, R, t } = computeSimilarityTransform(archetypeLandmarks3D, userLandmarks3D);
 
-            // Compute distances between corresponding landmarks
-            const distances = userLandmarks3D.map((point, idx) => {
-                return math.norm(math.subtract(point, transformedArchetype3D[idx]));
-            });
+                // Transform the archetype landmarks
+                const transformedArchetype3D = archetypeLandmarks3D.map((point) => {
+                    return math.add(math.multiply(s, math.multiply(point, R)), t);
+                });
 
-            // Compute characteristic hand length (length of the middle finger)
-            const baseIndex = 9; // Middle_Finger_MCP
-            const tipIndex = 12; // Middle_Finger_Tip
-            const handLengthVector = math.subtract(userLandmarks3D[tipIndex], userLandmarks3D[baseIndex]);
-            const handLength = math.norm(handLengthVector);
-            const normalizedDistances = distances.map((d) => d / handLength);
-            const rmse = Math.sqrt(math.mean(normalizedDistances.map((d) => d * d)));
+                // Compute distances between corresponding landmarks
+                const distances = userLandmarks3D.map((point, idx) => {
+                    return math.norm(math.subtract(point, transformedArchetype3D[idx]));
+                });
 
-            console.log(`RMSE: ${rmse.toFixed(4)}`);
+                // Compute characteristic hand length (length of the middle finger)
+                const baseIndex = 9; // Middle_Finger_MCP
+                const tipIndex = 12; // Middle_Finger_Tip
+                const handLengthVector = math.subtract(userLandmarks3D[tipIndex], userLandmarks3D[baseIndex]);
+                const handLength = math.norm(handLengthVector);
+                const normalizedDistances = distances.map((d) => d / handLength);
+                const rmse = Math.sqrt(math.mean(normalizedDistances.map((d) => d * d)));
 
-            const anomalyThreshold = 0.2;
-            const rmseThreshold = 0.19;
-            const maxRmse = 0.5;
+                console.log(`Hand ${handIndex + 1} RMSE: ${rmse.toFixed(4)}`);
 
-            const feedbackDict = {};
-            const landmarkColors = [];
+                const anomalyThreshold = 0.2;
+                const rmseThreshold = 0.19;
+                const maxRmse = 0.5;
 
-            for (let i = 0; i < normalizedDistances.length; i++) {
-                const dist = normalizedDistances[i];
-                const landmarkName = landmarkNames[i] || `Landmark_${i}`;
-                const givenCoord = userLandmarks3D[i];
-                const archetypeCoord = transformedArchetype3D[i];
+                const feedbackDict = {};
+                const landmarkColors = [];
 
-                if (dist > anomalyThreshold) {
-                    const diffX = Math.abs(givenCoord[0] - archetypeCoord[0]);
-                    const diffY = Math.abs(givenCoord[1] - archetypeCoord[1]);
-                    const diffZ = Math.abs(givenCoord[2] - archetypeCoord[2]);
+                for (let i = 0; i < normalizedDistances.length; i++) {
+                    const dist = normalizedDistances[i];
+                    const landmarkName = landmarkNames[i] || `Landmark_${i}`;
+                    const givenCoord = userLandmarks3D[i];
+                    const archetypeCoord = transformedArchetype3D[i];
 
-                    const maxDiff = Math.max(diffX, diffY, diffZ);
-                    let action = '';
+                    if (dist > anomalyThreshold) {
+                        const diffX = Math.abs(givenCoord[0] - archetypeCoord[0]);
+                        const diffY = Math.abs(givenCoord[1] - archetypeCoord[1]);
+                        const diffZ = Math.abs(givenCoord[2] - archetypeCoord[2]);
 
-                    if (maxDiff === diffX) {
-                        action = givenCoord[0] > archetypeCoord[0] ? `move ${landmarkName} left` : `move ${landmarkName} right`;
-                        landmarkColors[i] = 'yellow';
-                    } else if (maxDiff === diffY) {
-                        action = givenCoord[1] > archetypeCoord[1] ? `move ${landmarkName} up` : `move ${landmarkName} down`;
-                        landmarkColors[i] = 'yellow';
+                        const maxDiff = Math.max(diffX, diffY, diffZ);
+                        let action = '';
+
+                        if (maxDiff === diffX) {
+                            action = givenCoord[0] > archetypeCoord[0] ? `move ${landmarkName} left` : `move ${landmarkName} right`;
+                            landmarkColors[i] = 'yellow';
+                        } else if (maxDiff === diffY) {
+                            action = givenCoord[1] > archetypeCoord[1] ? `move ${landmarkName} up` : `move ${landmarkName} down`;
+                            landmarkColors[i] = 'yellow';
+                        } else {
+                            action = givenCoord[2] > archetypeCoord[2] ? `move ${landmarkName} forward` : `move ${landmarkName} backward`;
+                            landmarkColors[i] = 'skyblue';
+                        }
+
+                        feedbackDict[landmarkName] = action;
+
                     } else {
-                        action = givenCoord[2] > archetypeCoord[2] ? `move ${landmarkName} forward` : `move ${landmarkName} backward`;
-                        landmarkColors[i] = "skyblue";
+                        feedbackDict[landmarkName] = 'no anomalies detected';
+                        landmarkColors[i] = handIndex === 0 ? 'rgba(30, 136, 229, 0.7)' : 'rgba(128, 0, 128, 0.7)'; // Blue for Hand 1, Purple for Hand 2
                     }
-
-                    feedbackDict[landmarkName] = action;
-
-                } else {
-                    feedbackDict[landmarkName] = 'no anomalies detected';
-                    landmarkColors[i] = 'rgba(30, 136, 229, 0.7)';
                 }
+
+                // Update correction data for each hand
+                setCorrectionData(prevState => ({ ...prevState, [`Hand ${handIndex + 1}`]: feedbackDict }));
+                console.log(JSON.stringify({ [`Hand ${handIndex + 1}`]: feedbackDict }, null, 2));
+
+                // Draw user's hand landmarks and connections on camera canvas
+                drawLandmarks(
+                    canvasCtx,
+                    userLandmarks3D.map(([x, y]) => [x, y]),
+                    landmarkColors
+                );
+                drawConnections(
+                    canvasCtx,
+                    userLandmarks3D.map(([x, y]) => [x, y]),
+                    window.HAND_CONNECTIONS,
+                    handIndex === 0 ? 'rgba(30, 136, 229, 0.7)' : 'rgba(128, 0, 128, 0.7)' // Blue or Purple
+                );
+
+                // Draw bounding rectangle around the user's hand on camera canvas
+                const userLandmarks2D = userLandmarks3D.map(([x, y]) => [x, y]);
+                const xs = userLandmarks2D.map(([x, y]) => x);
+                const ys = userLandmarks2D.map(([x, y]) => y);
+                const minX = Math.min(...xs);
+                const maxX = Math.max(...xs);
+                const minY = Math.min(...ys);
+                const maxY = Math.max(...ys);
+
+                const cappedRmse = Math.min(rmse, maxRmse);
+                const normalizedRmse = cappedRmse / maxRmse;
+                const rmseRed = Math.floor(255 * normalizedRmse);
+                const rmseGreen = Math.floor(255 * (1 - normalizedRmse));
+                const rmseColor = `rgba(${rmseRed}, ${rmseGreen}, 0, 1)`;
+
+                canvasCtx.beginPath();
+                canvasCtx.rect(minX, minY, maxX - minX, maxY - minY);
+                canvasCtx.strokeStyle = rmseColor;
+                canvasCtx.lineWidth = 4;
+                canvasCtx.stroke();
+
+                let labelText = rmse < rmseThreshold ? `Hand ${handIndex + 1}: Correct` : `Hand ${handIndex + 1}: Incorrect`;
+                console.log(labelText);
+
+                canvasCtx.font = '20px Arial';
+                canvasCtx.fillStyle = rmseColor;
+                canvasCtx.fillText(labelText, minX, minY - 10);
             }
-
-            setCorrectionData(feedbackDict);
-            console.log(JSON.stringify(feedbackDict, null, 2));
-
-            // Draw user's hand landmarks and connections on camera canvas
-            drawLandmarks(
-                canvasCtx,
-                userLandmarks3D.map(([x, y]) => [x, y]),
-                landmarkColors
-            );
-            drawConnections(
-                canvasCtx,
-                userLandmarks3D.map(([x, y]) => [x, y]),
-                window.HAND_CONNECTIONS,
-                'rgba(30, 136, 229, 0.7)'
-            );
-
-            // Draw bounding rectangle around the user's hand on camera canvas
-            const userLandmarks2D = userLandmarks3D.map(([x, y]) => [x, y]);
-            const xs = userLandmarks2D.map(([x, y]) => x);
-            const ys = userLandmarks2D.map(([x, y]) => y);
-            const minX = Math.min(...xs);
-            const maxX = Math.max(...xs);
-            const minY = Math.min(...ys);
-            const maxY = Math.max(...ys);
-
-            const cappedRmse = Math.min(rmse, maxRmse);
-            const normalizedRmse = cappedRmse / maxRmse;
-            const rmseRed = Math.floor(255 * normalizedRmse);
-            const rmseGreen = Math.floor(255 * (1 - normalizedRmse));
-            const rmseColor = `rgba(${rmseRed}, ${rmseGreen}, 0, 1)`;
-
-            canvasCtx.beginPath();
-            canvasCtx.rect(minX, minY, maxX - minX, maxY - minY);
-            canvasCtx.strokeStyle = rmseColor;
-            canvasCtx.lineWidth = 4;
-            canvasCtx.stroke();
-
-            let labelText = rmse < rmseThreshold ? 'Correct' : 'Incorrect';
-            console.log(labelText);
-
-            canvasCtx.font = '20px Arial';
-            canvasCtx.fillStyle = rmseColor;
-            canvasCtx.fillText(labelText, minX, minY - 10);
         }
 
         canvasCtx.restore();
     }
+
 
     function onResultsNoHelp(results, canvasCtx, canvasElement) {
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
+        const videoWidth = videoRef.current.videoWidth;
+        const videoHeight = videoRef.current.videoHeight;
+
+        canvasElement.width = videoWidth;
+        canvasElement.height = videoHeight;
+
         if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-            const handLandmarks = results.multiHandLandmarks[0];
-            const landmarks = handLandmarks.map((lm) => [lm.x, lm.y, lm.z]);
+            const numHandsDetected = results.multiHandLandmarks.length;
+            const numHandsExpected = wordDataContext.noHands || 1;
 
-            const videoWidth = videoRef.current.videoWidth;
-            const videoHeight = videoRef.current.videoHeight;
+            // Limit the processing to the number of hands expected
+            const handsToProcess = Math.min(numHandsDetected, numHandsExpected);
 
-            canvasElement.width = videoWidth;
-            canvasElement.height = videoHeight;
+            for (let handIndex = 0; handIndex < handsToProcess; handIndex++) {
+                const handLandmarks = results.multiHandLandmarks[handIndex];
+                const landmarks = handLandmarks.map((lm) => [lm.x, lm.y, lm.z]);
 
-            const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
-            const archetypeLandmarks3D = mapLandmarksTo3D(archetypeLandmarks, videoWidth, videoHeight);
+                const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
 
-            // Compute the similarity transformation
-            const { s, R, t } = computeSimilarityTransform(archetypeLandmarks3D, userLandmarks3D);
+                // Get the corresponding archetype hand landmarks
+                const archetypeHandLandmarks = archetypeLandmarks[handIndex];
+                const archetypeLandmarks3D = mapLandmarksTo3D(archetypeHandLandmarks, videoWidth, videoHeight);
 
-            // Transform the archetype landmarks
-            const transformedArchetype3D = archetypeLandmarks3D.map((point) => {
-                return math.add(math.multiply(s, math.multiply(point, R)), t);
-            });
+                // Compute the similarity transformation
+                const { s, R, t } = computeSimilarityTransform(archetypeLandmarks3D, userLandmarks3D);
 
-            // Compute distances between corresponding landmarks
-            const distances = userLandmarks3D.map((point, idx) => {
-                return math.norm(math.subtract(point, transformedArchetype3D[idx]));
-            });
+                // Transform the archetype landmarks
+                const transformedArchetype3D = archetypeLandmarks3D.map((point) => {
+                    return math.add(math.multiply(s, math.multiply(point, R)), t);
+                });
 
-            // Compute characteristic hand length (length of the middle finger)
-            const baseIndex = 9; // Middle_Finger_MCP
-            const tipIndex = 12; // Middle_Finger_Tip
-            const handLengthVector = math.subtract(userLandmarks3D[tipIndex], userLandmarks3D[baseIndex]);
-            const handLength = math.norm(handLengthVector);
-            const normalizedDistances = distances.map((d) => d / handLength);
-            const rmse = Math.sqrt(math.mean(normalizedDistances.map((d) => d * d)));
+                // Compute distances between corresponding landmarks
+                const distances = userLandmarks3D.map((point, idx) => {
+                    return math.norm(math.subtract(point, transformedArchetype3D[idx]));
+                });
 
-            console.log(`RMSE: ${rmse.toFixed(4)}`);
+                // Compute characteristic hand length (length of the middle finger)
+                const baseIndex = 9; // Middle_Finger_MCP
+                const tipIndex = 12; // Middle_Finger_Tip
+                const handLengthVector = math.subtract(userLandmarks3D[tipIndex], userLandmarks3D[baseIndex]);
+                const handLength = math.norm(handLengthVector);
+                const normalizedDistances = distances.map((d) => d / handLength);
+                const rmse = Math.sqrt(math.mean(normalizedDistances.map((d) => d * d)));
 
-            const anomalyThreshold = 0.2;
-            const rmseThreshold = 0.19;
-            const maxRmse = 0.5;
+                console.log(`Hand ${handIndex + 1} RMSE: ${rmse.toFixed(4)}`);
 
-            const feedbackDict = {};
-            const landmarkColors = [];
+                const anomalyThreshold = 0.2;
+                const rmseThreshold = 0.19;
+                const maxRmse = 0.5;
 
-            for (let i = 0; i < normalizedDistances.length; i++) {
-                const dist = normalizedDistances[i];
-                const landmarkName = landmarkNames[i] || `Landmark_${i}`;
-                const givenCoord = userLandmarks3D[i];
-                const archetypeCoord = transformedArchetype3D[i];
+                // Draw bounding rectangle around the user's hand on camera canvas
+                const userLandmarks2D = userLandmarks3D.map(([x, y]) => [x, y]);
+                const xs = userLandmarks2D.map(([x, y]) => x);
+                const ys = userLandmarks2D.map(([x, y]) => y);
+                const minX = Math.min(...xs);
+                const maxX = Math.max(...xs);
+                const minY = Math.min(...ys);
+                const maxY = Math.max(...ys);
 
-                if (dist > anomalyThreshold) {
-                    const diffX = Math.abs(givenCoord[0] - archetypeCoord[0]);
-                    const diffY = Math.abs(givenCoord[1] - archetypeCoord[1]);
-                    const diffZ = Math.abs(givenCoord[2] - archetypeCoord[2]);
+                const cappedRmse = Math.min(rmse, maxRmse);
+                const normalizedRmse = cappedRmse / maxRmse;
+                const rmseRed = Math.floor(255 * normalizedRmse);
+                const rmseGreen = Math.floor(255 * (1 - normalizedRmse));
+                const rmseColor = `rgba(${rmseRed}, ${rmseGreen}, 0, 1)`;
 
-                    const maxDiff = Math.max(diffX, diffY, diffZ);
-                    let action = '';
+                canvasCtx.beginPath();
+                canvasCtx.rect(minX, minY, maxX - minX, maxY - minY);
+                canvasCtx.strokeStyle = rmseColor;
+                canvasCtx.lineWidth = 4;
+                canvasCtx.stroke();
 
-                    if (maxDiff === diffX) {
-                        action = givenCoord[0] > archetypeCoord[0] ? `move ${landmarkName} left` : `move ${landmarkName} right`;
-                        landmarkColors[i] = 'yellow';
-                    } else if (maxDiff === diffY) {
-                        action = givenCoord[1] > archetypeCoord[1] ? `move ${landmarkName} up` : `move ${landmarkName} down`;
-                        landmarkColors[i] = 'yellow';
-                    } else {
-                        action = givenCoord[2] > archetypeCoord[2] ? `move ${landmarkName} forward` : `move ${landmarkName} backward`;
-                        landmarkColors[i] = "skyblue";
-                    }
+                let labelText = rmse < rmseThreshold ? `Hand ${handIndex + 1}: Correct` : `Hand ${handIndex + 1}: Incorrect`;
+                console.log(labelText);
 
-                    feedbackDict[landmarkName] = action;
-
-                } else {
-                    feedbackDict[landmarkName] = 'no anomalies detected';
-                    landmarkColors[i] = 'rgba(30, 136, 229, 0.7)';
-                }
+                canvasCtx.font = '20px Arial';
+                canvasCtx.fillStyle = rmseColor;
+                canvasCtx.fillText(labelText, minX, minY - 10);
             }
-
-            setCorrectionData(feedbackDict);
-            console.log(JSON.stringify(feedbackDict, null, 2));
-
-
-            // Draw bounding rectangle around the user's hand on camera canvas
-            const userLandmarks2D = userLandmarks3D.map(([x, y]) => [x, y]);
-            const xs = userLandmarks2D.map(([x, y]) => x);
-            const ys = userLandmarks2D.map(([x, y]) => y);
-            const minX = Math.min(...xs);
-            const maxX = Math.max(...xs);
-            const minY = Math.min(...ys);
-            const maxY = Math.max(...ys);
-
-            const cappedRmse = Math.min(rmse, maxRmse);
-            const normalizedRmse = cappedRmse / maxRmse;
-            const rmseRed = Math.floor(255 * normalizedRmse);
-            const rmseGreen = Math.floor(255 * (1 - normalizedRmse));
-            const rmseColor = `rgba(${rmseRed}, ${rmseGreen}, 0, 1)`;
-
-            canvasCtx.beginPath();
-            canvasCtx.rect(minX, minY, maxX - minX, maxY - minY);
-            canvasCtx.strokeStyle = rmseColor;
-            canvasCtx.lineWidth = 4;
-            canvasCtx.stroke();
-
-            let labelText = rmse < rmseThreshold ? 'Correct' : 'Incorrect';
-            console.log(labelText);
-
-            canvasCtx.font = '20px Arial';
-            canvasCtx.fillStyle = rmseColor;
-            canvasCtx.fillText(labelText, minX, minY - 10);
         }
 
         canvasCtx.restore();
     }
+
 
 
 
@@ -496,12 +486,13 @@ function HandTracking({ wordID }) {
 
             {/* **Add the checkbox below the video canvas**  do the flex later*/}
             {cameraStarted && (
-                <div style={{ marginTop: '10px' }}>
-                    <label style={{ display: "flex", flexDirection: "row" }}>
+                <div style={{marginTop: '10px'}}>
+                    <button onClick={fetchCorrectionAdvice}>Get Correction Advice</button>
+                    <label style={{display: "flex", flexDirection: "row"}}>
                         <input
                             type="checkbox"
                             checked={helpMe}
-                            style={{ boxShadow: "none" }}
+                            style={{boxShadow: "none"}}
                             onChange={(e) => setHelpMe(e.target.checked)}
                         />
                         Help Me!
