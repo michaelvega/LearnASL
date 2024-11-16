@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 import "./Learn.css";
 import { useParams, useNavigate } from "react-router-dom";
@@ -20,17 +20,61 @@ const twoColors = {
 };
 
 function Learn() {
+    /*---------------------------------------
+    Here Im going to try to implement the first learn
+    */
+    const userInitials = localStorage.getItem("userInitials"); 
+    const frames = [
+        28,
+        27,
+        userInitials.charAt(0) ? userInitials.charAt(0).charCodeAt(0) - 64 : 1,
+        userInitials.charAt(1) ? userInitials.charAt(1).charCodeAt(0) - 64 : 1,
+    ];
+    const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
+
+    useEffect(() => {
+        console.log("ran");
+        navigateLearn();
+        setCurrentFrameIndex(currentFrameIndex + 1);
+
+    }, []);
+
+    //---------------------- end test
+    //
+
     const { wordID } = useParams(); // Get wordID from the URL
     const navigate = useNavigate();
+
+    //navigate learn based on the frames tou want to show
+    const navigateLearn = () => { 
+        navigate(`/learn/${frames[currentFrameIndex]}`);
+    }
+
+    const navigateNavigation = () => {
+        navigate("/navigation");
+    }
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const progressPercent = ((currentIndex + 1) / components.length) * 100;
 
     const handleNext = () => {
+        console.log(currentFrameIndex);
         if (currentIndex < components.length - 1) {
             setCurrentIndex(currentIndex + 1);
         }
+
+        // add changing frames for learn
+        if (currentIndex === components.length - 1 && currentFrameIndex < frames.length) {
+            console.log("ran");
+            setCurrentIndex(0);
+            setCurrentFrameIndex(currentFrameIndex + 1);
+            navigateLearn();
+        } else if (currentIndex === components.length - 1 && currentFrameIndex === frames.length) {
+            navigateNavigation();
+        }
+
+        
     };
 
     const handleBack = () => {
@@ -83,8 +127,9 @@ function Learn() {
                     <Button className="bigGreenButton" type="primary" disabled={currentIndex === 0} onClick={handleBack}>
                         <CaretLeftOutlined /> Back
                     </Button>
-                    <Button className="bigGreenButton" type="primary" disabled={currentIndex === components.length - 1} onClick={handleNext}>
-                        Next <CaretRightOutlined />
+                    <Button className="bigGreenButton" type="primary" onClick={handleNext}>
+
+                    {currentIndex === components.length - 1 ? (currentFrameIndex === frames.length ? "Finish" : "Next Sign") : "Next"} <CaretRightOutlined />
                     </Button>
                 </div>
             </div>

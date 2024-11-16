@@ -40,6 +40,10 @@ function Introduction() {
         navigate('/landing');
     };
 
+    const navigateLearn = () => {
+        navigate('/learn/1');
+    }
+
     const progressPercent = ((currentFrame + 1) / frames.length) * 100;
 
     const handleNext = () => {
@@ -51,6 +55,9 @@ function Introduction() {
             }
             localStorage.setItem("userInitials", name.split(" ")[0][0].toUpperCase() + name.split(" ")[1][0].toUpperCase());
         }       
+        if (currentFrame === frames.length-1) {
+            navigateLearn();
+        }
 
         if (currentFrame < frames.length - 1) {
             setAnimationClass('slide-out-left');
@@ -113,8 +120,9 @@ function Introduction() {
                     <Button className="bigGreenButton" type="primary" disabled={currentFrame === 0} onClick={handleBack}>
                         <CaretLeftOutlined /> Back
                     </Button>
-                    <Button className="bigGreenButton" type="primary" disabled={currentFrame === frames.length - 1} onClick={handleNext}>
-                        Next <CaretRightOutlined />
+                    <Button className="bigGreenButton" type="primary"  onClick={handleNext}>
+                        {currentFrame === frames.length - 1 ? "Get Started" : "Next"}
+                        <CaretRightOutlined />
                     </Button>
                 </div>
             </div>
