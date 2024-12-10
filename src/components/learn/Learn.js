@@ -114,7 +114,7 @@ function Learn() {
                         {currentIndex === 0 ? (
                             <Tutorial wordID={wordID} /> // Pass wordID as a prop to Tutorial
                         ) : (
-                            <HandTracking wordID={wordID} /> // Pass wordID as a prop to HandTracking
+                            <HandTracking key={wordID} wordID={wordID} /> // Pass wordID as a prop to HandTracking
                         )}
                         </div>
 

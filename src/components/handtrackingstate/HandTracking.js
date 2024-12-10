@@ -15,6 +15,8 @@ function HandTracking({ wordID }) {
     const [archetypeLandmarks, setArchetypeLandmarks] = useState([]);
     const [helpMe, setHelpMe] = useState(false);
     const helpMeRef = useRef(helpMe);
+    const [selectedFrameIndewordDataContextx, setSelectedFrameIndex] = useState(0);
+
 
     async function fetchCorrectionAdvice() {
         return "Hello world!!"
@@ -27,8 +29,10 @@ function HandTracking({ wordID }) {
     // Find the numpy txt file for the specified wordID
     useEffect(() => {
         const wordData = WordList.find(item => item.id === parseInt(wordID));
-        setWordDataContext(wordData);
         if (wordData && wordData.numpyFrames && wordData.numpyFrames[0]) {
+            setWordDataContext(wordData);
+            setArchetypeLandmarks([]); // Clear previous landmarks
+            console.log("Current wordID:", wordID);
             const frameUrls = wordData.numpyFrames; // This might have multiple frames
             const noHands = wordData.noHands || 1;
 
@@ -87,6 +91,11 @@ function HandTracking({ wordID }) {
                 })
                 .catch(error => console.error("Error loading landmarks:", error));
         }
+        return () => {
+            // Cleanup when wordID changes
+            setWordDataContext({});
+            setArchetypeLandmarks([]);
+        };
     }, [wordID]);
 
 
