@@ -261,15 +261,21 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
             const numHandsDetected = results.multiHandLandmarks.length;
             const numHandsExpected = wordDataContext.noHands || 1;
 
-            // Limit the processing to the number of hands expected
-            const handsToProcess = Math.min(numHandsDetected, numHandsExpected);
-
-            // We'll track if all hands are correct
+            // Start assuming all hands are correct
             let allHandsCorrect = true;
 
-            for (let handIndex = 0; handIndex < handsToProcess; handIndex++) {
+            // Always loop over the expected number of hands, not the detected number
+            for (let handIndex = 0; handIndex < numHandsExpected; handIndex++) {
 
-                // Get the corresponding archetype hand landmarks
+                // Check if this hand was detected at all
+                if (handIndex >= numHandsDetected) {
+                    // This means we expected a hand here but it wasn't detected
+                    console.warn(`Hand ${handIndex + 1} not detected. Expected ${numHandsExpected} hands, got ${numHandsDetected}.`);
+                    allHandsCorrect = false;
+                    continue;
+                }
+
+                // If we have the hand detected, proceed with the existing logic
                 const archetypeHandLandmarks = archetypeLandmarks[handIndex];
 
                 if (!archetypeHandLandmarks || archetypeHandLandmarks.length !== 21) {
@@ -281,23 +287,17 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
                 const handLandmarks = results.multiHandLandmarks[handIndex];
                 const landmarks = handLandmarks.map((lm) => [lm.x, lm.y, lm.z]);
                 const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
-
                 const archetypeLandmarks3D = mapLandmarksTo3D(archetypeHandLandmarks, videoWidth, videoHeight);
 
-                // Compute the similarity transformation
                 const { s, R, t } = computeSimilarityTransform(archetypeLandmarks3D, userLandmarks3D);
-
-                // Transform the archetype landmarks
                 const transformedArchetype3D = archetypeLandmarks3D.map((point) => {
                     return math.add(math.multiply(s, math.multiply(point, R)), t);
                 });
 
-                // Compute distances between corresponding landmarks
                 const distances = userLandmarks3D.map((point, idx) => {
                     return math.norm(math.subtract(point, transformedArchetype3D[idx]));
                 });
 
-                // Compute characteristic hand length (length of the middle finger)
                 const baseIndex = 9; // Middle_Finger_MCP
                 const tipIndex = 12; // Middle_Finger_Tip
                 const handLengthVector = math.subtract(userLandmarks3D[tipIndex], userLandmarks3D[baseIndex]);
@@ -314,6 +314,7 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
                 const feedbackDict = {};
                 const landmarkColors = [];
 
+                // Check each landmark
                 for (let i = 0; i < normalizedDistances.length; i++) {
                     const dist = normalizedDistances[i];
                     const landmarkName = landmarkNames[i] || `Landmark_${i}`;
@@ -321,6 +322,7 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
                     const archetypeCoord = transformedArchetype3D[i];
 
                     if (dist > anomalyThreshold) {
+                        // This hand is not perfect
                         const diffX = Math.abs(givenCoord[0] - archetypeCoord[0]);
                         const diffY = Math.abs(givenCoord[1] - archetypeCoord[1]);
                         const diffZ = Math.abs(givenCoord[2] - archetypeCoord[2]);
@@ -343,31 +345,22 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
 
                     } else {
                         feedbackDict[landmarkName] = 'no anomalies detected';
-                        landmarkColors[i] = handIndex === 0 ? 'rgba(30, 136, 229, 0.7)' : 'rgba(128, 0, 128, 0.7)'; // Blue for Hand 1, Purple for Hand 2
+                        landmarkColors[i] = handIndex === 0 ? 'rgba(30, 136, 229, 0.7)' : 'rgba(128, 0, 128, 0.7)';
                     }
                 }
 
-                // Update correction data for each hand
+                // Update correction data for this hand
                 setCorrectionData(prevState => ({ ...prevState, [`Hand ${handIndex + 1}`]: feedbackDict }));
                 console.log(JSON.stringify({ [`Hand ${handIndex + 1}`]: feedbackDict }, null, 2));
 
-                // Draw user's hand landmarks and connections on camera canvas
-                drawLandmarks(
-                    canvasCtx,
-                    userLandmarks3D.map(([x, y]) => [x, y]),
-                    landmarkColors
-                );
-                drawConnections(
-                    canvasCtx,
-                    userLandmarks3D.map(([x, y]) => [x, y]),
-                    window.HAND_CONNECTIONS,
-                    handIndex === 0 ? 'rgba(30, 136, 229, 0.7)' : 'rgba(128, 0, 128, 0.7)' // Blue or Purple
-                );
+                // Draw the results
+                drawLandmarks(canvasCtx, userLandmarks3D.map(([x, y]) => [x, y]), landmarkColors);
+                drawConnections(canvasCtx, userLandmarks3D.map(([x, y]) => [x, y]), window.HAND_CONNECTIONS,
+                    handIndex === 0 ? 'rgba(30, 136, 229, 0.7)' : 'rgba(128, 0, 128, 0.7)');
 
-                // Draw bounding rectangle around the user's hand on camera canvas
                 const userLandmarks2D = userLandmarks3D.map(([x, y]) => [x, y]);
-                const xs = userLandmarks2D.map(([x, y]) => x);
-                const ys = userLandmarks2D.map(([x, y]) => y);
+                const xs = userLandmarks2D.map(([x]) => x);
+                const ys = userLandmarks2D.map(([, y]) => y);
                 const minX = Math.min(...xs);
                 const maxX = Math.max(...xs);
                 const minY = Math.min(...ys);
@@ -392,12 +385,13 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
                 canvasCtx.fillStyle = rmseColor;
                 canvasCtx.fillText(labelText, minX, minY - 10);
 
-                // If any hand is incorrect, we won't auto-advance
+                // If this hand is incorrect, do not allow advancement
                 if (rmse >= rmseThreshold) {
                     allHandsCorrect = false;
                 }
             }
 
+            // Only advance if allHandsCorrect is true after checking all hands
             if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex < wordDataContext.numpyFrames.length - 1) {
                 setTimeout(() => {
                     onFrameChange(selectedFrameIndex + 1);
@@ -423,15 +417,20 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
             const numHandsDetected = results.multiHandLandmarks.length;
             const numHandsExpected = wordDataContext.noHands || 1;
 
-            // Limit the processing to the number of hands expected
-            const handsToProcess = Math.min(numHandsDetected, numHandsExpected);
+            // Start assuming all hands are correct
+                        let allHandsCorrect = true;
 
-            // We'll track if all hands are correct
-            let allHandsCorrect = true;
+            // Always loop over the expected number of hands, not the detected number
+            for (let handIndex = 0; handIndex < numHandsExpected; handIndex++) {
+                // Check if this hand was detected at all
+                if (handIndex >= numHandsDetected) {
+                    // This means we expected a hand here but it wasn't detected
+                    console.warn(`Hand ${handIndex + 1} not detected. Expected ${numHandsExpected} hands, got ${numHandsDetected}.`);
+                    allHandsCorrect = false;
+                    continue;
+                }
 
-            for (let handIndex = 0; handIndex < handsToProcess; handIndex++) {
-
-                // Get the corresponding archetype hand landmarks
+                // If we have the hand detected, proceed with the existing logic
                 const archetypeHandLandmarks = archetypeLandmarks[handIndex];
 
                 if (!archetypeHandLandmarks || archetypeHandLandmarks.length !== 21) {
@@ -443,23 +442,17 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
                 const handLandmarks = results.multiHandLandmarks[handIndex];
                 const landmarks = handLandmarks.map((lm) => [lm.x, lm.y, lm.z]);
                 const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
-
                 const archetypeLandmarks3D = mapLandmarksTo3D(archetypeHandLandmarks, videoWidth, videoHeight);
 
-                // Compute the similarity transformation
                 const { s, R, t } = computeSimilarityTransform(archetypeLandmarks3D, userLandmarks3D);
-
-                // Transform the archetype landmarks
                 const transformedArchetype3D = archetypeLandmarks3D.map((point) => {
                     return math.add(math.multiply(s, math.multiply(point, R)), t);
                 });
 
-                // Compute distances between corresponding landmarks
                 const distances = userLandmarks3D.map((point, idx) => {
                     return math.norm(math.subtract(point, transformedArchetype3D[idx]));
                 });
 
-                // Compute characteristic hand length (length of the middle finger)
                 const baseIndex = 9; // Middle_Finger_MCP
                 const tipIndex = 12; // Middle_Finger_Tip
                 const handLengthVector = math.subtract(userLandmarks3D[tipIndex], userLandmarks3D[baseIndex]);
@@ -469,14 +462,12 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
 
                 console.log(`Hand ${handIndex + 1} RMSE: ${rmse.toFixed(4)}`);
 
-                const anomalyThreshold = 0.2;
                 const rmseThreshold = 0.19;
                 const maxRmse = 0.5;
 
-                // Draw bounding rectangle around the user's hand on camera canvas
                 const userLandmarks2D = userLandmarks3D.map(([x, y]) => [x, y]);
-                const xs = userLandmarks2D.map(([x, y]) => x);
-                const ys = userLandmarks2D.map(([x, y]) => y);
+                const xs = userLandmarks2D.map(([x]) => x);
+                const ys = userLandmarks2D.map(([, y]) => y);
                 const minX = Math.min(...xs);
                 const maxX = Math.max(...xs);
                 const minY = Math.min(...ys);
@@ -501,11 +492,13 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
                 canvasCtx.fillStyle = rmseColor;
                 canvasCtx.fillText(labelText, minX, minY - 10);
 
-                // If any hand is incorrect, we won't auto-advance
+                // If this hand is incorrect, set allHandsCorrect to false
                 if (rmse >= rmseThreshold) {
                     allHandsCorrect = false;
                 }
             }
+
+            // Only advance if allHandsCorrect is true after checking all hands
             if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex < wordDataContext.numpyFrames.length - 1) {
                 setTimeout(() => {
                     onFrameChange(selectedFrameIndex + 1);
