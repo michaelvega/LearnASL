@@ -19,7 +19,16 @@ const twoColors = {
     '100%': '#566B30',
 };
 
+
+
 function Learn() {
+
+    const [selectedFrameIndex, setSelectedFrameIndex] = useState(0);
+
+    const handleFrameChange = (newIndex) => {
+        setSelectedFrameIndex(newIndex);
+    };
+
     /*---------------------------------------
     Here Im going to try to implement the first learn
     */
@@ -56,7 +65,7 @@ function Learn() {
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    const progressPercent = ((currentIndex + 1) / components.length) * 100;
+    //const progressPercent = (currentFrameIndex / frames.length) * 100;
 
     const handleNext = () => {
         console.log(currentFrameIndex);
@@ -91,6 +100,10 @@ function Learn() {
 
     const { title, name, instructions, numpyFrames, image } = wordData;
 
+    const totalFrames = wordData ? wordData.numpyFrames.length : 1;
+    const progressPercent = ((selectedFrameIndex + 1) / totalFrames) * 100;
+
+
     return (
         <div className="wrapperLearn">
             <div className="verticalWrapperLearn">
@@ -114,7 +127,7 @@ function Learn() {
                         {currentIndex === 0 ? (
                             <Tutorial wordID={wordID} /> // Pass wordID as a prop to Tutorial
                         ) : (
-                            <HandTracking key={wordID} wordID={wordID} /> // Pass wordID as a prop to HandTracking
+                            <HandTracking key={wordID} wordID={wordID} selectedFrameIndex={selectedFrameIndex} onFrameChange={handleFrameChange}  /> // Pass wordID as a prop to HandTracking
                         )}
                         </div>
 

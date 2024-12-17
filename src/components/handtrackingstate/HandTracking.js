@@ -3,7 +3,7 @@ import * as math from 'mathjs';
 import { SingularValueDecomposition } from 'ml-matrix';
 import WordList from "../worldList/WordList";
 
-function HandTracking({ wordID }) {
+function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [isDetecting, setIsDetecting] = useState(false);
@@ -15,7 +15,6 @@ function HandTracking({ wordID }) {
     const [archetypeLandmarks, setArchetypeLandmarks] = useState([]);
     const [helpMe, setHelpMe] = useState(false);
     const helpMeRef = useRef(helpMe);
-    const [selectedFrameIndewordDataContextx, setSelectedFrameIndex] = useState(0);
 
 
     async function fetchCorrectionAdvice() {
@@ -28,41 +27,40 @@ function HandTracking({ wordID }) {
 
     // Find the numpy txt file for the specified wordID
     useEffect(() => {
+        let isMounted = true;
         const wordData = WordList.find(item => item.id === parseInt(wordID));
-        if (wordData && wordData.numpyFrames && wordData.numpyFrames[0]) {
-            setWordDataContext(wordData);
-            setArchetypeLandmarks([]); // Clear previous landmarks
-            console.log("Current wordID:", wordID);
-            const frameUrls = wordData.numpyFrames; // This might have multiple frames
-            const noHands = wordData.noHands || 1;
+        if (wordData && wordData.numpyFrames && wordData.numpyFrames[selectedFrameIndex]) {
+            console.log("Current wordID:", wordID, "Selected Frame:", selectedFrameIndex);
 
-            // For now, we are only considering the first frame
-            const archetypeUrl = frameUrls[0];
+            // Instead of clearing immediately, we just overwrite once data is fetched
+            setWordDataContext(wordData);
+
+            const frameUrls = wordData.numpyFrames;
+            const noHands = wordData.noHands || 1;
+            const archetypeUrl = frameUrls[selectedFrameIndex];
 
             fetch(archetypeUrl)
                 .then(response => response.text())
                 .then(text => {
-                    // Split the text into lines and parse landmarks
+                    if (!isMounted) return;
                     const lines = text.trim().split('\n');
 
                     if (noHands === 1) {
-                        // Parse landmarks for one hand
                         const parsedData = lines
                             .map(line => {
                                 const values = line.trim().split(/\s+/).map(Number);
                                 return values.includes(NaN) || values.length !== 3 ? null : values;
                             })
                             .filter(item => item !== null)
-                            .slice(0, 21); // Ensure we only have 21 landmarks
+                            .slice(0, 21);
 
                         if (parsedData.length === 21) {
-                            setArchetypeLandmarks([parsedData]); // Wrap in array to keep consistent with two hands
+                            setArchetypeLandmarks([parsedData]);
                             console.log("Parsed archetype landmarks (one hand):", parsedData);
                         } else {
                             console.error("Error: Expected 21 points for one hand, but got", parsedData.length);
                         }
                     } else if (noHands === 2) {
-                        // Parse landmarks for two hands
                         const hand1Landmarks = [];
                         const hand2Landmarks = [];
                         let currentHand = null;
@@ -81,9 +79,9 @@ function HandTracking({ wordID }) {
                             }
                         }
 
-                        if (hand1Landmarks.length === 21 && hand2Landmarks.length === 21) {
+                        if (hand1Landmarks.length === 21 && (hand2Landmarks.length === 21 || hand2Landmarks.length === 0)) {
                             setArchetypeLandmarks([hand1Landmarks, hand2Landmarks]);
-                            console.log("Parsed archetype landmarks (two hands):", { hand1Landmarks, hand2Landmarks });
+                            console.log("Parsed archetype landmarks:", { hand1Landmarks, hand2Landmarks });
                         } else {
                             console.error("Error: Expected 21 points for each hand, but got", hand1Landmarks.length, hand2Landmarks.length);
                         }
@@ -91,12 +89,12 @@ function HandTracking({ wordID }) {
                 })
                 .catch(error => console.error("Error loading landmarks:", error));
         }
+
         return () => {
-            // Cleanup when wordID changes
-            setWordDataContext({});
-            setArchetypeLandmarks([]);
+            // We no longer clear data here; just prevent updates if unmounted
+            isMounted = false;
         };
-    }, [wordID]);
+    }, [wordID, selectedFrameIndex]); // React to changes in wordID and selectedFrameIndex
 
 
 
@@ -124,6 +122,9 @@ function HandTracking({ wordID }) {
         20: 'Little_Finger_Tip',
     };
 
+    const handsRef = useRef(null);
+
+
     const startCamera = () => {
         setCameraStarted(true);
         const videoElement = videoRef.current;
@@ -137,7 +138,7 @@ function HandTracking({ wordID }) {
         });
 
         // Set maxNumHands based on noHands
-        const maxHands = wordDataContext.noHands || 1; // Default to 1 if undefined
+        const maxHands = wordDataContext.noHands || 1;
 
         hands.setOptions({
             maxNumHands: maxHands,
@@ -146,7 +147,8 @@ function HandTracking({ wordID }) {
             minTrackingConfidence: 0.5,
         });
 
-        hands.onResults(onResultsWrapper);
+        // Store hands instance in ref
+        handsRef.current = hands;
 
         const camera = new window.Camera(videoElement, {
             onFrame: async () => {
@@ -158,7 +160,6 @@ function HandTracking({ wordID }) {
 
         camera.start();
 
-        // Update video dimensions when metadata is loaded
         videoElement.onloadedmetadata = () => {
             setVideoWidth(videoElement.videoWidth);
             setVideoHeight(videoElement.videoHeight);
@@ -230,6 +231,11 @@ function HandTracking({ wordID }) {
     }
 
     const onResultsWrapper = (results) => {
+        // If archetypeLandmarks are empty, return early
+        if (!archetypeLandmarks || archetypeLandmarks.length === 0) {
+            return;
+        }
+
         const canvasElement = canvasRef.current;
         const canvasCtx = canvasElement.getContext('2d');
         setIsDetecting(true);
@@ -258,14 +264,24 @@ function HandTracking({ wordID }) {
             // Limit the processing to the number of hands expected
             const handsToProcess = Math.min(numHandsDetected, numHandsExpected);
 
-            for (let handIndex = 0; handIndex < handsToProcess; handIndex++) {
-                const handLandmarks = results.multiHandLandmarks[handIndex];
-                const landmarks = handLandmarks.map((lm) => [lm.x, lm.y, lm.z]);
+            // We'll track if all hands are correct
+            let allHandsCorrect = true;
 
-                const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
+            for (let handIndex = 0; handIndex < handsToProcess; handIndex++) {
 
                 // Get the corresponding archetype hand landmarks
                 const archetypeHandLandmarks = archetypeLandmarks[handIndex];
+
+                if (!archetypeHandLandmarks || archetypeHandLandmarks.length !== 21) {
+                    console.warn(`Skipping hand ${handIndex + 1} because it does not have 21 landmarks.`);
+                    allHandsCorrect = false;
+                    continue;
+                }
+
+                const handLandmarks = results.multiHandLandmarks[handIndex];
+                const landmarks = handLandmarks.map((lm) => [lm.x, lm.y, lm.z]);
+                const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
+
                 const archetypeLandmarks3D = mapLandmarksTo3D(archetypeHandLandmarks, videoWidth, videoHeight);
 
                 // Compute the similarity transformation
@@ -375,6 +391,17 @@ function HandTracking({ wordID }) {
                 canvasCtx.font = '20px Arial';
                 canvasCtx.fillStyle = rmseColor;
                 canvasCtx.fillText(labelText, minX, minY - 10);
+
+                // If any hand is incorrect, we won't auto-advance
+                if (rmse >= rmseThreshold) {
+                    allHandsCorrect = false;
+                }
+            }
+
+            if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex < wordDataContext.numpyFrames.length - 1) {
+                setTimeout(() => {
+                    onFrameChange(selectedFrameIndex + 1);
+                }, 2000);
             }
         }
 
@@ -399,14 +426,24 @@ function HandTracking({ wordID }) {
             // Limit the processing to the number of hands expected
             const handsToProcess = Math.min(numHandsDetected, numHandsExpected);
 
-            for (let handIndex = 0; handIndex < handsToProcess; handIndex++) {
-                const handLandmarks = results.multiHandLandmarks[handIndex];
-                const landmarks = handLandmarks.map((lm) => [lm.x, lm.y, lm.z]);
+            // We'll track if all hands are correct
+            let allHandsCorrect = true;
 
-                const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
+            for (let handIndex = 0; handIndex < handsToProcess; handIndex++) {
 
                 // Get the corresponding archetype hand landmarks
                 const archetypeHandLandmarks = archetypeLandmarks[handIndex];
+
+                if (!archetypeHandLandmarks || archetypeHandLandmarks.length !== 21) {
+                    console.warn(`Skipping hand ${handIndex + 1} because it does not have 21 landmarks.`);
+                    allHandsCorrect = false;
+                    continue;
+                }
+
+                const handLandmarks = results.multiHandLandmarks[handIndex];
+                const landmarks = handLandmarks.map((lm) => [lm.x, lm.y, lm.z]);
+                const userLandmarks3D = mapLandmarksTo3D(landmarks, videoWidth, videoHeight);
+
                 const archetypeLandmarks3D = mapLandmarksTo3D(archetypeHandLandmarks, videoWidth, videoHeight);
 
                 // Compute the similarity transformation
@@ -463,11 +500,27 @@ function HandTracking({ wordID }) {
                 canvasCtx.font = '20px Arial';
                 canvasCtx.fillStyle = rmseColor;
                 canvasCtx.fillText(labelText, minX, minY - 10);
+
+                // If any hand is incorrect, we won't auto-advance
+                if (rmse >= rmseThreshold) {
+                    allHandsCorrect = false;
+                }
+            }
+            if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex < wordDataContext.numpyFrames.length - 1) {
+                setTimeout(() => {
+                    onFrameChange(selectedFrameIndex + 1);
+                }, 2000);
             }
         }
 
         canvasCtx.restore();
     }
+
+    useEffect(() => {
+        if (handsRef.current) {
+            handsRef.current.onResults(onResultsWrapper);
+        }
+    }, [onResultsWrapper, archetypeLandmarks, selectedFrameIndex]);
 
 
 
@@ -493,22 +546,41 @@ function HandTracking({ wordID }) {
                 />
             </div>
 
-            {/* **Add the checkbox below the video canvas**  do the flex later*/}
             {cameraStarted && (
-                <div style={{marginTop: '10px'}}>
+                <div style={{ marginTop: '10px' }}>
                     <button onClick={fetchCorrectionAdvice}>Get Correction Advice</button>
-                    <label style={{display: "flex", flexDirection: "row"}}>
+                    <label style={{ display: "flex", flexDirection: "row" }}>
                         <input
                             type="checkbox"
                             checked={helpMe}
-                            style={{boxShadow: "none"}}
+                            style={{ boxShadow: "none" }}
                             onChange={(e) => setHelpMe(e.target.checked)}
                         />
                         Help Me!
                     </label>
                 </div>
             )}
+
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+                {wordDataContext.numpyFrames && wordDataContext.numpyFrames.map((_, index) => (
+                    <div
+                        key={index}
+                        onClick={() => onFrameChange(index)}
+                        style={{
+                            width: '10px',
+                            height: '10px',
+                            margin: '0 5px',
+                            borderRadius: '50%',
+                            backgroundColor: selectedFrameIndex === index ? '#566B30' : '#D0D6C5',
+                            cursor: 'pointer',
+                            border: '1px solid #000'
+                        }}
+                    />
+                ))}
+            </div>
         </>
+
+
     );
 }
 
