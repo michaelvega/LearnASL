@@ -3,7 +3,7 @@ import * as math from 'mathjs';
 import { SingularValueDecomposition } from 'ml-matrix';
 import WordList from "../worldList/WordList";
 
-function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
+function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [isDetecting, setIsDetecting] = useState(false);
@@ -15,10 +15,139 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
     const [archetypeLandmarks, setArchetypeLandmarks] = useState([]);
     const [helpMe, setHelpMe] = useState(false);
     const helpMeRef = useRef(helpMe);
-
+    const [combinedImage, setCombinedImage] = useState(null);
 
     async function fetchCorrectionAdvice() {
-        return "Hello world!!"
+        // make a backend server
+
+        // Grab current user canvas image as a data URL (initially PNG)
+        const userCanvasElement = canvasRef.current;
+        const userImageData = userCanvasElement.toDataURL('image/png');
+
+        // Load the archetype image passed from the parent
+        const archetypeImg = new Image();
+        archetypeImg.src = image; // 'image' prop from parent
+        await new Promise((resolve, reject) => {
+            archetypeImg.onload = resolve;
+            archetypeImg.onerror = reject;
+        });
+
+        // Create an offscreen canvas to combine both images side by side
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = videoWidth * 2; // twice the width
+        offCanvas.height = videoHeight;
+        const offCtx = offCanvas.getContext('2d');
+
+        // Create an Image object for the user image
+        const userImg = new Image();
+        userImg.src = userImageData;
+        await new Promise((resolve, reject) => {
+            userImg.onload = resolve;
+            userImg.onerror = reject;
+        });
+
+        // Draw user image on the left
+        offCtx.drawImage(userImg, 0, 0, videoWidth, videoHeight);
+
+        // Draw archetype image on the right
+        offCtx.drawImage(archetypeImg, videoWidth, 0, videoWidth, videoHeight);
+
+        // Now we have combinedDataUrl as a PNG
+        const combinedDataUrl = offCanvas.toDataURL('image/png');
+
+        // === Simulate Python Compression Steps in JS ===
+        // Load combinedDataUrl into an image
+        const combinedImg = new Image();
+        combinedImg.src = combinedDataUrl;
+        await new Promise((resolve, reject) => {
+            combinedImg.onload = resolve;
+            combinedImg.onerror = reject;
+        });
+
+        // Resize and compress
+        const decrease_multiply = 3;     // factor from your Python code
+        const compression_quality = 90;  // quality setting, mapped to 0-1
+
+        const compressedCanvas = document.createElement('canvas');
+        const newWidth = Math.floor(offCanvas.width / decrease_multiply);
+        const newHeight = Math.floor(offCanvas.height / decrease_multiply);
+
+        compressedCanvas.width = newWidth;
+        compressedCanvas.height = newHeight;
+        const compressedCtx = compressedCanvas.getContext('2d');
+
+        // Draw combined image at reduced size
+        compressedCtx.drawImage(combinedImg, 0, 0, newWidth, newHeight);
+
+        // Convert to JPEG (no alpha) at given quality
+        const jpegQuality = compression_quality / 100; // 0.9 in this case
+        const compressedDataUrl = compressedCanvas.toDataURL('image/jpeg', jpegQuality);
+
+        // Set this so you can see the compressed image in your UI
+        setCombinedImage(compressedDataUrl);
+
+        // === Now make the API call to Anthropics ===
+        // Extract just the base64 part of the data URL
+        const base64Data = compressedDataUrl.split(',')[1];
+
+        const apiKey = process.env.REACT_APP_ANTHROPIC_API_KEY;
+        if (!apiKey) {
+            console.error("No Anthropics API key found in environment variables.");
+            return;
+        }
+
+        // Create the request payload matching the Anthropics messages API
+        const payload = {
+            "model": "claude-3-haiku-20240307",
+            "max_tokens": 1024,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Analyze the user's attempt to sign the ASL 'O' shape (left image) and compare it to the correct shape (right image). Output feedback in concise bullets on how to improve: hand rotation (clockwise or counter), finger tip positioning and tucking, relaxation, and alignment of certain fingers. Sort the advice by relevance. No conclusion, max 3 bullets, no commentary apart from bullets."
+                        },
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/jpeg",
+                                "data": base64Data
+                            }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        try {
+            const response = await fetch("https://api.anthropic.com/v1/messages", {
+                method: "POST",
+                mode: 'no-cors',
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-api-key": apiKey
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Anthropic API error:", errorText);
+                return;
+            }
+
+            const result = await response.json();
+            console.log("Anthropic Response:", result);
+
+            // result.content should have the advice
+            return result.content;
+        } catch (error) {
+            console.error("Error calling Anthropics API:", error);
+        }
+
+        return "Hello world!!";
     }
 
     useEffect(() => {
@@ -257,6 +386,11 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
         canvasElement.width = videoWidth;
         canvasElement.height = videoHeight;
 
+        // Draw the current video frame onto the canvas first
+        if (videoRef.current) {
+            canvasCtx.drawImage(videoRef.current, 0, 0, videoWidth, videoHeight);
+        }
+
         if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
             const numHandsDetected = results.multiHandLandmarks.length;
             const numHandsExpected = wordDataContext.noHands || 1;
@@ -413,6 +547,11 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
         canvasElement.width = videoWidth;
         canvasElement.height = videoHeight;
 
+        // Draw the current video frame onto the canvas first
+        if (videoRef.current) {
+            canvasCtx.drawImage(videoRef.current, 0, 0, videoWidth, videoHeight);
+        }
+
         if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
             const numHandsDetected = results.multiHandLandmarks.length;
             const numHandsExpected = wordDataContext.noHands || 1;
@@ -551,6 +690,13 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex }) {
                         />
                         Help Me!
                     </label>
+                </div>
+            )}
+
+            {/* Display the combined image if it exists */}
+            {combinedImage && (
+                <div style={{ marginTop: '20px' }}>
+                    <img src={combinedImage} alt="Comparison" />
                 </div>
             )}
 

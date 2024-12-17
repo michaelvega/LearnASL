@@ -127,7 +127,7 @@ function Learn() {
                         {currentIndex === 0 ? (
                             <Tutorial wordID={wordID} /> // Pass wordID as a prop to Tutorial
                         ) : (
-                            <HandTracking key={wordID} wordID={wordID} selectedFrameIndex={selectedFrameIndex} onFrameChange={handleFrameChange}  /> // Pass wordID as a prop to HandTracking
+                            <HandTracking key={wordID} wordID={wordID} selectedFrameIndex={selectedFrameIndex} onFrameChange={handleFrameChange} image={image}  /> // Pass wordID as a prop to HandTracking
                         )}
                         </div>
 
