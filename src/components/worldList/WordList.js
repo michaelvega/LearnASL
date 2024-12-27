@@ -208,7 +208,7 @@ const WordList = [
     {
         id: 15,
         title: "The Letter O",
-        name: "O for octopus",
+        name: "O",
         instructions: "Start by making a circular shape with your four fingers and thumb. Remember to touch the tip of your middle finger with the tip of your thumb. This hand shape represents the letter 'o' in ASL.",
         image: unmarkedo1,
         numpyFrames: [numpyO1],

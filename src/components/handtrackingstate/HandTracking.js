@@ -16,15 +16,14 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
     const [helpMe, setHelpMe] = useState(false);
     const helpMeRef = useRef(helpMe);
     const [combinedImage, setCombinedImage] = useState(null);
+    const [advice, setAdvice] = useState("");
 
     async function fetchCorrectionAdvice() {
-        // make a backend server
-
-        // Grab current user canvas image as a data URL (initially PNG)
+        // 1) Grab current user canvas image as a data URL (initially PNG)
         const userCanvasElement = canvasRef.current;
         const userImageData = userCanvasElement.toDataURL('image/png');
 
-        // Load the archetype image passed from the parent
+        // 2) Load the archetype image passed from the parent
         const archetypeImg = new Image();
         archetypeImg.src = image; // 'image' prop from parent
         await new Promise((resolve, reject) => {
@@ -32,13 +31,13 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
             archetypeImg.onerror = reject;
         });
 
-        // Create an offscreen canvas to combine both images side by side
+        // 3) Create an offscreen canvas to combine both images side by side
         const offCanvas = document.createElement('canvas');
         offCanvas.width = videoWidth * 2; // twice the width
         offCanvas.height = videoHeight;
         const offCtx = offCanvas.getContext('2d');
 
-        // Create an Image object for the user image
+        // 4) Load user image for the left side
         const userImg = new Image();
         userImg.src = userImageData;
         await new Promise((resolve, reject) => {
@@ -46,17 +45,17 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
             userImg.onerror = reject;
         });
 
-        // Draw user image on the left
+        // 5) Draw user image on the left
         offCtx.drawImage(userImg, 0, 0, videoWidth, videoHeight);
 
-        // Draw archetype image on the right
+        // 6) Draw archetype image on the right
         offCtx.drawImage(archetypeImg, videoWidth, 0, videoWidth, videoHeight);
 
-        // Now we have combinedDataUrl as a PNG
+        // 7) Now we have combinedDataUrl as a PNG
         const combinedDataUrl = offCanvas.toDataURL('image/png');
 
         // === Simulate Python Compression Steps in JS ===
-        // Load combinedDataUrl into an image
+        // 8) Load combinedDataUrl into an image
         const combinedImg = new Image();
         combinedImg.src = combinedDataUrl;
         await new Promise((resolve, reject) => {
@@ -64,7 +63,7 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
             combinedImg.onerror = reject;
         });
 
-        // Resize and compress
+        // 9) Resize and compress
         const decrease_multiply = 3;     // factor from your Python code
         const compression_quality = 90;  // quality setting, mapped to 0-1
 
@@ -83,20 +82,16 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
         const jpegQuality = compression_quality / 100; // 0.9 in this case
         const compressedDataUrl = compressedCanvas.toDataURL('image/jpeg', jpegQuality);
 
-        // Set this so you can see the compressed image in your UI
+        console.log(`%cClick here to view the compressed image: ${compressedDataUrl}`, "color: green; text-decoration: underline;");
+
+        // Keep setting this so you can see the compressed side-by-side image in your UI
         setCombinedImage(compressedDataUrl);
 
-        // === Now make the API call to Anthropics ===
-        // Extract just the base64 part of the data URL
+        // === Make the API call to your Node/Express server (which calls Anthropics) ===
+        // 10) Extract just the base64 part of the data URL
         const base64Data = compressedDataUrl.split(',')[1];
 
-        const apiKey = process.env.REACT_APP_ANTHROPIC_API_KEY;
-        if (!apiKey) {
-            console.error("No Anthropics API key found in environment variables.");
-            return;
-        }
-
-        // Create the request payload matching the Anthropics messages API
+        // 11) Build the payload for the server
         const payload = {
             "model": "claude-3-haiku-20240307",
             "max_tokens": 1024,
@@ -106,7 +101,7 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
                     "content": [
                         {
                             "type": "text",
-                            "text": "Analyze the user's attempt to sign the ASL 'O' shape (left image) and compare it to the correct shape (right image). Output feedback in concise bullets on how to improve: hand rotation (clockwise or counter), finger tip positioning and tucking, relaxation, and alignment of certain fingers. Sort the advice by relevance. No conclusion, max 3 bullets, no commentary apart from bullets."
+                            "text": `Analyze the user's attempt for ASL sign '${wordDataContext.name}' shape (left image) and compare it to the correct shape (right image). Output feedback in concise bullets on how to improve: hand rotation (clockwise or counter), finger tip positioning and tucking, relaxation, and alignment of certain fingers. Sort the advice by relevance. No conclusion, max 3 bullets, no commentary apart from bullets.`
                         },
                         {
                             "type": "image",
@@ -122,29 +117,33 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
         };
 
         try {
-            const response = await fetch("https://api.anthropic.com/v1/messages", {
+            console.log(payload.messages[0].content[0].text);
+            // 12) Call our Node/Express server
+            const response = await fetch("http://localhost:3001/anthropic", {
                 method: "POST",
-                mode: 'no-cors',
                 headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": apiKey
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(payload)
             });
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error("Anthropic API error:", errorText);
+                console.error("Backend server error:", errorText);
                 return;
             }
 
             const result = await response.json();
-            console.log("Anthropic Response:", result);
+            console.log("Anthropic Response:", result.content[0].text);
 
-            // result.content should have the advice
-            return result.content;
+            // 13) Store the advice text in state
+            if (result && result.content[0].text) {
+                setAdvice(result.content[0].text);
+            }
+
+            return result.content; // result.content has the advice
         } catch (error) {
-            console.error("Error calling Anthropics API:", error);
+            console.error("Error calling the local backend:", error);
         }
 
         return "Hello world!!";
@@ -274,6 +273,7 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
             modelComplexity: 1,
             minDetectionConfidence: 0.5,
             minTrackingConfidence: 0.5,
+            selfieMode: false
         });
 
         // Store hands instance in ref
@@ -694,9 +694,15 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
             )}
 
             {/* Display the combined image if it exists */}
-            {combinedImage && (
+
+            {advice && (
                 <div style={{ marginTop: '20px' }}>
-                    <img src={combinedImage} alt="Comparison" />
+                    <h3>Claude's Advice:</h3>
+                    <textarea
+                        readOnly
+                        value={advice}
+                        style={{ width: '100%', height: '150px' }}
+                    />
                 </div>
             )}
 
