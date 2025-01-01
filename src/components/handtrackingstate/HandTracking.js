@@ -3,7 +3,7 @@ import * as math from 'mathjs';
 import { SingularValueDecomposition } from 'ml-matrix';
 import WordList from "../worldList/WordList";
 
-function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
+function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image, onSignComplete }) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [isDetecting, setIsDetecting] = useState(false);
@@ -531,6 +531,10 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
                     onFrameChange(selectedFrameIndex + 1);
                 }, 2000);
             }
+
+            if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex === wordDataContext.numpyFrames.length - 1) {
+                onSignComplete(true);
+            }
         }
 
         canvasCtx.restore();
@@ -644,6 +648,10 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
                     onFrameChange(selectedFrameIndex + 1);
                 }, 2000);
             }
+
+            if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex === wordDataContext.numpyFrames.length - 1) {
+                onSignComplete(true);
+            }
         }
 
         canvasCtx.restore();
@@ -654,7 +662,6 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
             handsRef.current.onResults(onResultsWrapper);
         }
     }, [onResultsWrapper, archetypeLandmarks, selectedFrameIndex]);
-
 
 
 

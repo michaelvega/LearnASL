@@ -36,6 +36,8 @@ function Learn() {
         frames.indexOf(parseInt(wordID)) !== -1 ? frames.indexOf(parseInt(wordID)) : 0
     );
     const [selectedFrameIndex, setSelectedFrameIndex] = useState(0); // Frame-level control for HandTracking
+    const [isSignComplete, setIsSignComplete] = useState(false); // Track sign completion
+
 
     const handleFrameChange = (newIndex) => {
         setSelectedFrameIndex(newIndex);
@@ -62,6 +64,8 @@ function Learn() {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const handleNext = () => {
+        setIsSignComplete(false);
+
         if (currentIndex < components.length - 1) {
             // Move between Tutorial and Hand Tracking
             setCurrentIndex(currentIndex + 1);
@@ -76,6 +80,7 @@ function Learn() {
     };
 
     const handleBack = () => {
+        setIsSignComplete(false);
         if (currentIndex > 0) {
             // Move between Hand Tracking and Tutorial
             setCurrentIndex(currentIndex - 1);
@@ -134,11 +139,11 @@ function Learn() {
                         {currentIndex === 0 ? (
                             <Tutorial wordID={wordID} /> // Pass wordID as a prop to Tutorial
                         ) : (
-                            <HandTracking key={wordID} wordID={wordID} selectedFrameIndex={selectedFrameIndex} onFrameChange={handleFrameChange} image={image}  /> // Pass wordID as a prop to HandTracking
+                            <HandTracking key={wordID} wordID={wordID} selectedFrameIndex={selectedFrameIndex} onFrameChange={handleFrameChange} image={image} onSignComplete={(isCorrect) => setIsSignComplete(isCorrect)}   /> // Pass wordID as a prop to HandTracking
                         )}
                         </div>
 
-                        {components[currentIndex].label == "Hand Tracking" && <img className = "exampleImg" src = {image}></img>}
+                        {components[currentIndex].label === "Hand Tracking" && <img className = "exampleImg" src = {image} alt={`Example Image of ${wordData.name}`}></img>}
 
                     </div>
                 </div>
@@ -147,9 +152,11 @@ function Learn() {
                     <Button className="bigGreenButton" type="primary" disabled={currentIndex === 0} onClick={handleBack}>
                         <CaretLeftOutlined /> Back
                     </Button>
-                    <Button className="bigGreenButton" type="primary" onClick={handleNext}>
+                    <Button className="bigGreenButton" type="primary" onClick={handleNext} disabled={currentIndex === components.length - 1 && !isSignComplete}>
 
-                    {currentIndex === components.length - 1 ? (currentFrameIndex === frames.length ? "Finish" : "Next Sign") : "Next"} <CaretRightOutlined />
+                        {currentIndex === components.length - 1 && currentFrameIndex === frames.length - 1
+                            ? "Finish"
+                            : "Next"}  <CaretRightOutlined />
                     </Button>
                 </div>
             </div>
