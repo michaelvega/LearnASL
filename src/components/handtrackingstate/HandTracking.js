@@ -442,7 +442,7 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
                 console.log(`Hand ${handIndex + 1} RMSE: ${rmse.toFixed(4)}`);
 
                 const anomalyThreshold = 0.2;
-                const rmseThreshold = 0.19;
+                const rmseThreshold = wordDataContext.correctrmseThreshold ?? 0.19;
                 const maxRmse = 0.5;
 
                 const feedbackDict = {};
@@ -601,8 +601,9 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
 
                 console.log(`Hand ${handIndex + 1} RMSE: ${rmse.toFixed(4)}`);
 
-                const rmseThreshold = 0.19;
-                const maxRmse = 0.5;
+                // no anomaly threshold bc we are not looking for this
+                const rmseThreshold = wordDataContext.correctrmseThreshold ?? 0.19;
+                const maxRmse = wordDataContext.maxRSME ?? 0.5;
 
                 const userLandmarks2D = userLandmarks3D.map(([x, y]) => [x, y]);
                 const xs = userLandmarks2D.map(([x]) => x);
