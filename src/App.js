@@ -11,6 +11,7 @@ import Hands from "./components/handtrackingstate/HandTracking";
 import HandGestureComparison from "./components/handtrackingstate/HandTracking";
 import Tutorial from "./components/tutorial/Tutorial";
 import DropDownHelp from "./components/dropdownhelp/DropDownHelp";
+import SignIn from "./components/signin/SignIn";
 
 
 
@@ -89,6 +90,7 @@ function App() {
           <Route path="/navigation" element={<Navigation />} />
           <Route path="/introduceYourself" element={<IntroduceYourself />} />
           <Route path={"/dropdown"} element={<DropDownHelp/>} />
+          <Route path ={"/signin"} element = {<SignIn/>} />
         </Routes>
       </div>
   )
