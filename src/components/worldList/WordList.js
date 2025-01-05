@@ -76,7 +76,8 @@ import nametwoHands2 from "../../assets/numpyarrays/outputtwohandsName2.txt"
 import nametwoHands3 from "../../assets/numpyarrays/outputtwohandsName3.txt"
 
 
-
+// easy = 0.1, default = 0.19, hard = 0.30
+// default maxRSME = 0.5
 
 const WordList = [
     {
@@ -86,7 +87,8 @@ const WordList = [
         instructions: "Start by making a fist with your dominant hand. Extend your thumb out to the side of your hand. Keep your index, middle, ring, and pinky fingers curled into your palm. This hand shape represents the letter 'a' in ASL.",
         image: unmarkeda1,
         numpyFrames: [numpyA1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.3
     },
     {
         id: 2,
@@ -95,7 +97,8 @@ const WordList = [
         instructions: "Start by extending your dominant hand with your fingers and thumb spread apart. Put your four fingers together. Rest your thumb against the palm of your hand. This hand shape represents the letter 'b' in ASL.",
         image: unmarkedb1,
         numpyFrames: [numpyB1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 3,
@@ -104,7 +107,8 @@ const WordList = [
         instructions: "Start by curling your four fingers and thumb into a circular shape. Leave a little space between the thumb and index finger. Remember that the pinky faces outwards. This hand shape represents the letter 'c' in ASL.",
         image: unmarkedc1,
         numpyFrames: [numpyC1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 4,
@@ -113,7 +117,8 @@ const WordList = [
         instructions: "Start by curling your four fingers and thumb into a circular shape. Extend your index finger directly upwards, away from the others. Make sure to keep your middle finger and thumb touching. This hand shape represents the letter 'd' in ASL.",
         image: unmarkedd1,
         numpyFrames: [numpyD1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 5,
@@ -122,7 +127,8 @@ const WordList = [
         instructions: "Start by extending all fingers outwards into a flat hand. Have the tip of each finger, and thumb, touch the palm. Remember to keep the four fingers together. This hand shape represents the letter 'e' in ASL.",
         image: unmarkede1,
         numpyFrames: [numpyE1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 6,
@@ -131,7 +137,8 @@ const WordList = [
         instructions: "Make an 'okay' sign. Alternatively, start by making a circular shape with your index finger and thumb touching. Extend middle, ring, and pinky upwards and keep them separated from each other. Remember to have the circular shape face your audience, or away from you. This hand shape represents the letter 'f' in ASL.",
         image: unmarkedf1,
         numpyFrames: [numpyF1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 7,
@@ -140,7 +147,8 @@ const WordList = [
         instructions: "Start by using your index finger to point at something whilst making a closed fist. Extend your thumb so it is parallel with your index finger. Point both the index finger and thumb to the side or your non-dominant hand, or laterally. Remember to keep every other finger closed. This hand shape represents the letter 'g' in ASL.",
         image: unmarkedg1,
         numpyFrames: [numpyG1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 8,
@@ -149,7 +157,8 @@ const WordList = [
         instructions: "Start by using your index finger and middle finger, together, to point at something whilst making a closed fist. Point both the index and middle fingers to the side or your non-dominant hand, or laterally. Remember to keep every other finger closed. This hand shape represents the letter 'h' in ASL.",
         image: unmarkedh1,
         numpyFrames: [numpyH1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 9,
@@ -158,7 +167,8 @@ const WordList = [
         instructions: "Start by making a fist with your palm facing outwards, away from you. Raise your pinky finger directly upwards whilst keeping all other fingers closed. This hand shape represents the letter 'i' in ASL.",
         image: unmarkedi1,
         numpyFrames: [numpyI1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 10,
@@ -167,7 +177,8 @@ const WordList = [
         instructions: "Start by making a fist with your palm facing inwards, towards you. Raise your pinky finger directly upwards whilst keeping all other fingers closed. Move your hand and finger in the hooked motion of a letter J. This hand shape represents the letter 'j' in ASL.",
         image: unmarkedj1,
         numpyFrames: [numpyJ1, numpyJ2],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 11,
@@ -176,7 +187,8 @@ const WordList = [
         instructions: "Start by making a fist with your palm facing outwards, away from you. Raise your index and middle fingers directly upwards, while keeping all other fingers closed. Place your thumb on the middle joint of your middle finger. This hand shape represents the letter 'k' in ASL.",
         image: unmarkedk1,
         numpyFrames: [numpyK1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 12,
@@ -185,7 +197,8 @@ const WordList = [
         instructions: "Make an 'L' sign. Alternatively, make a fist with your index finger extended directly upwards and thumb extended sideways. This hand shape represents the letter 'L' in ASL.",
         image: unmarkedl1,
         numpyFrames: [numpyL1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 13,
@@ -194,7 +207,8 @@ const WordList = [
         instructions: "Start with a flat hand. Close only your pinky finger. Have your thumb extend over your palm and touch the pinky knuckle. This hand shape represents the letter 'm' in ASL.",
         image: unmarkedm1,
         numpyFrames: [numpyM1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 14,
@@ -203,7 +217,9 @@ const WordList = [
         instructions: "Start with a flat hand. Close your pinky and ring fingers. Have your thumb extend over your palm and touch the ring finger knuckle. This shape represents the letter 'n' in ASL.",
         image: unmarkedn1,
         numpyFrames: [numpyN1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.3,
+        maxRSME: 0.70
     },
     {
         id: 15,
@@ -212,7 +228,8 @@ const WordList = [
         instructions: "Start by making a circular shape with your four fingers and thumb. Remember to touch the tip of your middle finger with the tip of your thumb. This hand shape represents the letter 'o' in ASL.",
         image: unmarkedo1,
         numpyFrames: [numpyO1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.3
     },
     {
         id: 16,
@@ -221,7 +238,8 @@ const WordList = [
         instructions: "Make an upside-down 'k' sign with the back of your hand facing away from you. This hand shape represents the letter 'p' in ASL.",
         image: unmarkedp1,
         numpyFrames: [numpyP1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 17,
@@ -230,7 +248,8 @@ const WordList = [
         instructions: "Make an upside-down 'g' sign with the back of your hand facing away from you. This hand shape represents the letter 'q' in ASL.",
         image: unmarkedq1,
         numpyFrames: [numpyQ1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 18,
@@ -239,7 +258,8 @@ const WordList = [
         instructions: "Start by making a fist with your palm facing outwards, away from you. Raise your index and middle fingers directly upwards, while keeping all other fingers closed. Cross your index finger over your middle finger. This hand shape represents the letter 'r' in ASL.",
         image: unmarkedr1,
         numpyFrames: [numpyR1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 19,
@@ -248,7 +268,9 @@ const WordList = [
         instructions: "Make a fist with your palm facing outwards, away from you. This hand shape represents the letter 's' in ASL.",
         image: unmarkeds1,
         numpyFrames: [numpyS1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.5,
+        maxRSME: 0.99,
     },
     {
         id: 20,
@@ -257,7 +279,8 @@ const WordList = [
         instructions: "Start with a flat hand. Close your pinky, ring, and middle fingers. Have your thumb extend over your palm and touch the middle finger knuckle. This shape represents the letter 't' in ASL.",
         image: unmarkedt1,
         numpyFrames: [numpyT1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 21,
@@ -266,7 +289,8 @@ const WordList = [
         instructions: "Start by making a fist with your palm facing outwards, away from you. Raise your index and middle fingers directly upwards, while keeping all other fingers closed. This hand shape represents the letter 'u' in ASL.",
         image: unmarkedu1,
         numpyFrames: [numpyU1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 22,
@@ -275,7 +299,8 @@ const WordList = [
         instructions: "Start by making a fist with your palm facing outwards, away from you. Raise your index and middle fingers directly upwards, while keeping all other fingers closed. Separate your index and middle fingers away from each other, forming a V shape. This hand shape represents the letter 'v' in ASL.",
         image: unmarkedv1,
         numpyFrames: [numpyV1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 23,
@@ -284,7 +309,8 @@ const WordList = [
         instructions: "Start by making a fist with your palm facing outwards, away from you. Raise your index, middle, and ring fingers directly upwards, while keeping all other fingers closed. This hand shape represents the letter 'w' in ASL.",
         image: unmarkedw1,
         numpyFrames: [numpyW1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 24,
@@ -293,7 +319,8 @@ const WordList = [
         instructions: "Make a fist with your palm facing outwards, away from you. Extend your index finger upwards and bend it in a hook shape. This hand shape represents the letter 'x' in ASL.",
         image: unmarkedx1,
         numpyFrames: [numpyX1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 25,
@@ -302,7 +329,8 @@ const WordList = [
         instructions: "Make a fist with your palm facing outwards, away from you. Extend your thumb and pinky in opposite directions. This hand shape represents the letter 'y' in ASL.",
         image: unmarkedy1,
         numpyFrames: [numpyY1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 26,
@@ -311,7 +339,8 @@ const WordList = [
         instructions: "Start by using your index finger to point at something while making a closed fist. Use your index finger to pretend to draw a Z shape. This hand shape represents the letter 'z' in ASL.",
         image: unmarkedz1,
         numpyFrames: [numpyZ1, numpyZ2, numpyZ3, numpyZ4],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
     {
         id: 27,
@@ -320,7 +349,8 @@ const WordList = [
         instructions: "Hold both hands in front of you. Extend your index and middle fingers on both hands, keeping them together and other fingers closed. Tap the extended fingers of one hand onto the other hand's fingers in a cross shape. This sign represents 'name' in ASL.",
         image: unmarkedname1,
         numpyFrames: [nametwoHands2, nametwoHands3],
-        noHands: 2
+        noHands: 2,
+        correctrmseThreshold: 0.3
     },
     {
         id: 28,
@@ -329,7 +359,8 @@ const WordList = [
         instructions: "Place your dominant hand flat on your chest, fingers together. Tap your chest lightly with your palm. This sign represents 'my' in ASL.",
         image: unmarkedmy1,
         numpyFrames: [numpyMy1],
-        noHands: 1
+        noHands: 1,
+        correctrmseThreshold: 0.19
     },
 ];
 

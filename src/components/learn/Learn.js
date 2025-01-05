@@ -9,6 +9,8 @@ import WordList from "../worldList/WordList";
 import HandTracking from "../handtrackingstate/HandTracking";
 import Tutorial from "../tutorial/Tutorial";
 
+import ExerciseList from "../worldList/ExerciseList";
+
 const components = [
     { label: "Tutorial" },
     { label: "Hand Tracking" },
@@ -23,85 +25,95 @@ const twoColors = {
 
 function Learn() {
 
-    const [selectedFrameIndex, setSelectedFrameIndex] = useState(0);
+    const { exerciseID, wordID } = useParams(); // Get exerciseID and wordID from the URL
+    const navigate = useNavigate();
+
+// Fetch the exercise from ExerciseList
+    const exercise = ExerciseList.find((item) => item.id === parseInt(exerciseID)) || ExerciseList[0];
+    const frames = exercise ? exercise.numpyFrames : []; // Default to an empty array if no exercise found
+
+    const [currentFrameIndex, setCurrentFrameIndex] = useState(
+        frames.indexOf(parseInt(wordID)) !== -1 ? frames.indexOf(parseInt(wordID)) : 0
+    );
+    const [selectedFrameIndex, setSelectedFrameIndex] = useState(0); // Frame-level control for HandTracking
+    const [isSignComplete, setIsSignComplete] = useState(false); // Track sign completion
+
 
     const handleFrameChange = (newIndex) => {
         setSelectedFrameIndex(newIndex);
     };
 
-    /*---------------------------------------
-    Here Im going to try to implement the first learn
-    */
-    const userInitials = localStorage.getItem("userInitials"); 
-    const frames = [
-        28,
-        27,
-        userInitials.charAt(0) ? userInitials.charAt(0).charCodeAt(0) - 64 : 1,
-        userInitials.charAt(1) ? userInitials.charAt(1).charCodeAt(0) - 64 : 1,
-    ];
-    const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
-
     useEffect(() => {
-        console.log("ran");
-        navigateLearn();
-        setCurrentFrameIndex(currentFrameIndex + 1);
+        if (frames.length > 0 && frames[currentFrameIndex] !== undefined) {
+            navigate(`/learn/${exerciseID}/${frames[currentFrameIndex]}`);
+        }
+    }, [frames, currentFrameIndex]);
 
-    }, []);
-
-    //---------------------- end test
-    //
-
-    const { wordID } = useParams(); // Get wordID from the URL
-    const navigate = useNavigate();
-
-    //navigate learn based on the frames tou want to show
-    const navigateLearn = () => { 
-        navigate(`/learn/${frames[currentFrameIndex]}`);
-    }
+    const navigateLearn = (newIndex) => {
+        if (frames[newIndex] !== undefined) {
+            setCurrentFrameIndex(newIndex);
+            setSelectedFrameIndex(0); // Reset to the first frame when navigating to a new sign
+            navigate(`/learn/${exerciseID}/${frames[newIndex]}`);
+        }
+    };
 
     const navigateNavigation = () => {
         navigate("/navigation");
-    }
+    };
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    //const progressPercent = (currentFrameIndex / frames.length) * 100;
-
     const handleNext = () => {
-        console.log(currentFrameIndex);
-        if (currentIndex < components.length - 1) {
-            setCurrentIndex(currentIndex + 1);
-        }
+        setIsSignComplete(false);
 
-        // add changing frames for learn
-        if (currentIndex === components.length - 1 && currentFrameIndex < frames.length) {
-            console.log("ran");
-            setCurrentIndex(0);
-            setCurrentFrameIndex(currentFrameIndex + 1);
-            navigateLearn();
-        } else if (currentIndex === components.length - 1 && currentFrameIndex === frames.length) {
+        if (currentIndex < components.length - 1) {
+            // Move between Tutorial and Hand Tracking
+            setCurrentIndex(currentIndex + 1);
+        } else if (currentIndex === components.length - 1 && currentFrameIndex < frames.length - 1) {
+            // Move to the next sign
+            setCurrentIndex(0); // Reset to Tutorial
+            navigateLearn(currentFrameIndex + 1);
+        } else if (currentIndex === components.length - 1 && currentFrameIndex === frames.length - 1) {
+            // Finish when at the end of all signs
             navigateNavigation();
         }
-
-        
     };
 
     const handleBack = () => {
+        setIsSignComplete(false);
         if (currentIndex > 0) {
+            // Move between Hand Tracking and Tutorial
             setCurrentIndex(currentIndex - 1);
+        } else if (currentIndex === 0 && currentFrameIndex > 0) {
+            // Move to the previous sign
+            setCurrentIndex(components.length - 1); // Reset to Hand Tracking
+            navigateLearn(currentFrameIndex - 1);
         }
     };
 
-    const wordData = WordList.find((item) => item.id === parseInt(wordID));
+    const wordData = WordList.find((item) => item.id === frames[currentFrameIndex]);
 
     if (!wordData) {
-        return <div>Content not found.</div>;
+        return <div>Content not found.</div>;
     }
 
     const { title, name, instructions, numpyFrames, image } = wordData;
 
-    const totalFrames = wordData ? wordData.numpyFrames.length : 1;
-    const progressPercent = ((selectedFrameIndex + 1) / totalFrames) * 100;
+// Calculate total frames across all signs
+    const totalFrames = frames.reduce((sum, frameID) => {
+        const frameData = WordList.find((item) => item.id === frameID);
+        return sum + (frameData?.numpyFrames?.length || 1); // Default to 1 if no frames found
+    }, 0);
+
+// Calculate completed frames
+    const completedFrames = frames.slice(0, currentFrameIndex).reduce((sum, frameID) => {
+        const frameData = WordList.find((item) => item.id === frameID);
+        return sum + (frameData?.numpyFrames?.length || 1);
+    }, selectedFrameIndex + 1); // Include the current frame's progress
+
+// Progress percentage
+    const progressPercent = ((completedFrames - 1) / totalFrames) * 100;
+
 
 
     return (
@@ -127,11 +139,11 @@ function Learn() {
                         {currentIndex === 0 ? (
                             <Tutorial wordID={wordID} /> // Pass wordID as a prop to Tutorial
                         ) : (
-                            <HandTracking key={wordID} wordID={wordID} selectedFrameIndex={selectedFrameIndex} onFrameChange={handleFrameChange} image={image}  /> // Pass wordID as a prop to HandTracking
+                            <HandTracking key={wordID} wordID={wordID} selectedFrameIndex={selectedFrameIndex} onFrameChange={handleFrameChange} image={image} onSignComplete={(isCorrect) => setIsSignComplete(isCorrect)}   /> // Pass wordID as a prop to HandTracking
                         )}
                         </div>
 
-                        {components[currentIndex].label == "Hand Tracking" && <img className = "exampleImg" src = {image}></img>}
+                        {components[currentIndex].label === "Hand Tracking" && <img className = "exampleImg" src = {image} alt={`Example Image of ${wordData.name}`}></img>}
 
                     </div>
                 </div>
@@ -140,9 +152,11 @@ function Learn() {
                     <Button className="bigGreenButton" type="primary" disabled={currentIndex === 0} onClick={handleBack}>
                         <CaretLeftOutlined /> Back
                     </Button>
-                    <Button className="bigGreenButton" type="primary" onClick={handleNext}>
+                    <Button className="bigGreenButton" type="primary" onClick={handleNext} disabled={currentIndex === components.length - 1 && !isSignComplete}>
 
-                    {currentIndex === components.length - 1 ? (currentFrameIndex === frames.length ? "Finish" : "Next Sign") : "Next"} <CaretRightOutlined />
+                        {currentIndex === components.length - 1 && currentFrameIndex === frames.length - 1
+                            ? "Finish"
+                            : "Next"}  <CaretRightOutlined />
                     </Button>
                 </div>
             </div>

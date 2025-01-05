@@ -3,7 +3,7 @@ import * as math from 'mathjs';
 import { SingularValueDecomposition } from 'ml-matrix';
 import WordList from "../worldList/WordList";
 
-function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
+function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image, onSignComplete }) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [isDetecting, setIsDetecting] = useState(false);
@@ -442,7 +442,7 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
                 console.log(`Hand ${handIndex + 1} RMSE: ${rmse.toFixed(4)}`);
 
                 const anomalyThreshold = 0.2;
-                const rmseThreshold = 0.19;
+                const rmseThreshold = wordDataContext.correctrmseThreshold ?? 0.19;
                 const maxRmse = 0.5;
 
                 const feedbackDict = {};
@@ -531,6 +531,10 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
                     onFrameChange(selectedFrameIndex + 1);
                 }, 2000);
             }
+
+            if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex === wordDataContext.numpyFrames.length - 1) {
+                onSignComplete(true);
+            }
         }
 
         canvasCtx.restore();
@@ -601,8 +605,9 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
 
                 console.log(`Hand ${handIndex + 1} RMSE: ${rmse.toFixed(4)}`);
 
-                const rmseThreshold = 0.19;
-                const maxRmse = 0.5;
+                // no anomaly threshold bc we are not looking for this
+                const rmseThreshold = wordDataContext.correctrmseThreshold ?? 0.19;
+                const maxRmse = wordDataContext.maxRSME ?? 0.5;
 
                 const userLandmarks2D = userLandmarks3D.map(([x, y]) => [x, y]);
                 const xs = userLandmarks2D.map(([x]) => x);
@@ -643,6 +648,10 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
                     onFrameChange(selectedFrameIndex + 1);
                 }, 2000);
             }
+
+            if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex === wordDataContext.numpyFrames.length - 1) {
+                onSignComplete(true);
+            }
         }
 
         canvasCtx.restore();
@@ -653,7 +662,6 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image }) {
             handsRef.current.onResults(onResultsWrapper);
         }
     }, [onResultsWrapper, archetypeLandmarks, selectedFrameIndex]);
-
 
 
 
