@@ -12,6 +12,8 @@ import HandGestureComparison from "./components/handtrackingstate/HandTracking";
 import Tutorial from "./components/tutorial/Tutorial";
 import DropDownHelp from "./components/dropdownhelp/DropDownHelp";
 import SignIn from "./components/signin/SignIn";
+import DictionaryLearn from "./components/learn/DictionaryLearn";
+import Practice from "./components/learn/Practice";
 
 
 
@@ -86,7 +88,9 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/landing" element={<Landing />} />
           <Route path="/introduction" element={<Introduction />} />
-          <Route path="/learn/:exerciseID/:wordID" element={<Learn />} />
+          <Route path="/learn/:exerciseID/:wordID" element={<Learn type={"learn"} />} />
+          <Route path="/practice/:exerciseID/:wordID" element={<Practice type={"practice"} />} />
+          <Route path="/dictionary/:wordID" element={<DictionaryLearn type={"learn"} />} />
           <Route path="/navigation" element={<Navigation />} />
           <Route path="/introduceYourself" element={<IntroduceYourself />} />
           <Route path={"/dropdown"} element={<DropDownHelp/>} />

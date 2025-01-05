@@ -8,7 +8,7 @@ const ExerciseList = [
     },
     {
         id: 2,
-        name: "mynameisNO",
+        name: "mynameisMV",
         numpyFrames: [28, 27, 14, 15],
     },
 

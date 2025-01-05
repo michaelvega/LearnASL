@@ -3,7 +3,7 @@ import * as math from 'mathjs';
 import { SingularValueDecomposition } from 'ml-matrix';
 import WordList from "../worldList/WordList";
 
-function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image, onSignComplete }) {
+function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image, onSignComplete, mode, subFrameURL }) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [isDetecting, setIsDetecting] = useState(false);
@@ -156,6 +156,10 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image, onSign
     // Find the numpy txt file for the specified wordID
     useEffect(() => {
         let isMounted = true;
+
+        // ==========================================
+        // Original code for "learn" / "dictionary"
+        // ==========================================
         const wordData = WordList.find(item => item.id === parseInt(wordID));
         if (wordData && wordData.numpyFrames && wordData.numpyFrames[selectedFrameIndex]) {
             console.log("Current wordID:", wordID, "Selected Frame:", selectedFrameIndex);
@@ -211,18 +215,56 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image, onSign
                             setArchetypeLandmarks([hand1Landmarks, hand2Landmarks]);
                             console.log("Parsed archetype landmarks:", { hand1Landmarks, hand2Landmarks });
                         } else {
-                            console.error("Error: Expected 21 points for each hand, but got", hand1Landmarks.length, hand2Landmarks.length);
+                            console.error(
+                                "Error: Expected 21 points for each hand, but got",
+                                hand1Landmarks.length,
+                                hand2Landmarks.length
+                            );
                         }
                     }
                 })
                 .catch(error => console.error("Error loading landmarks:", error));
         }
 
+        // ==========================================
+        // NEW code block for "practice" or custom frames
+        // (Does NOT affect learn/dict logic above.)
+        // ==========================================
+        if (mode === "practice" && subFrameURL) {
+            console.log("Practice mode: fetching from subFrameURL =", subFrameURL);
+
+            fetch(subFrameURL)
+                .then(response => response.text())
+                .then(text => {
+                    if (!isMounted) return;
+
+                    // Basic single-hand parse (adapt if you need multiple hands)
+                    const lines = text.trim().split('\n');
+                    const parsedData = lines
+                        .map(line => {
+                            const values = line.trim().split(/\s+/).map(Number);
+                            return values.includes(NaN) || values.length !== 3 ? null : values;
+                        })
+                        .filter(item => item !== null)
+                        .slice(0, 21);
+
+                    if (parsedData.length === 21) {
+                        setArchetypeLandmarks([parsedData]);
+                        console.log("Practice: parsed custom subFrame landmarks:", parsedData);
+                    } else {
+                        console.error("Practice: expected 21 points, got", parsedData.length);
+                    }
+                })
+                .catch(error => console.error("Practice: error loading subFrameURL:", error));
+        }
+
         return () => {
             // We no longer clear data here; just prevent updates if unmounted
             isMounted = false;
         };
-    }, [wordID, selectedFrameIndex]); // React to changes in wordID and selectedFrameIndex
+        // Add mode, subFrameURL to dependencies if needed
+    }, [wordID, selectedFrameIndex, mode, subFrameURL]);
+
 
 
 
@@ -525,16 +567,19 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image, onSign
                 }
             }
 
-            // Only advance if allHandsCorrect is true after checking all hands
-            if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex < wordDataContext.numpyFrames.length - 1) {
-                setTimeout(() => {
-                    onFrameChange(selectedFrameIndex + 1);
-                }, 2000);
+            if (mode === "learn") {
+                // Only advance if allHandsCorrect is true after checking all hands
+                if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex < wordDataContext.numpyFrames.length - 1) {
+                    setTimeout(() => {
+                        onFrameChange(selectedFrameIndex + 1);
+                    }, 2000);
+                }
+
+                if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex === wordDataContext.numpyFrames.length - 1) {
+                    onSignComplete(true);
+                }
             }
 
-            if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex === wordDataContext.numpyFrames.length - 1) {
-                onSignComplete(true);
-            }
         }
 
         canvasCtx.restore();
@@ -642,16 +687,19 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image, onSign
                 }
             }
 
-            // Only advance if allHandsCorrect is true after checking all hands
-            if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex < wordDataContext.numpyFrames.length - 1) {
-                setTimeout(() => {
-                    onFrameChange(selectedFrameIndex + 1);
-                }, 2000);
+            if (mode === "learn") {
+                // Only advance if allHandsCorrect is true after checking all hands
+                if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex < wordDataContext.numpyFrames.length - 1) {
+                    setTimeout(() => {
+                        onFrameChange(selectedFrameIndex + 1);
+                    }, 2000);
+                }
+
+                if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex === wordDataContext.numpyFrames.length - 1) {
+                    onSignComplete(true);
+                }
             }
 
-            if (allHandsCorrect && wordDataContext.numpyFrames && selectedFrameIndex === wordDataContext.numpyFrames.length - 1) {
-                onSignComplete(true);
-            }
         }
 
         canvasCtx.restore();
@@ -666,8 +714,8 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image, onSign
 
 
     return (
-        <>
-            <button onClick={startCamera}>Start Camera</button>
+        <div style={{display: "flex", flexDirection: "column"}}>
+            <button onClick={startCamera} style={{ width: 'auto', maxWidth: '200px', display: 'inline-block' }}>Start Camera</button>
 
             <div style={{ position: 'relative' }}>
                 <video
@@ -731,7 +779,7 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image, onSign
                     />
                 ))}
             </div>
-        </>
+        </div>
 
 
     );

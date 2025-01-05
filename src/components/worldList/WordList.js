@@ -218,8 +218,8 @@ const WordList = [
         image: unmarkedn1,
         numpyFrames: [numpyN1],
         noHands: 1,
-        correctrmseThreshold: 0.3,
-        maxRSME: 0.70
+        correctrmseThreshold: 0.25,
+        maxRSME: 0.65
     },
     {
         id: 15,
