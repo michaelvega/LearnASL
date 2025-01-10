@@ -495,7 +495,7 @@ function HandTracking({ wordID, onFrameChange, selectedFrameIndex, image, onSign
 
     const onResultsWrapper = (results) => {
         // If archetypeLandmarks are empty, return early
-        if (!archetypeLandmarks || archetypeLandmarks.length === 0) {
+        if (!archetypeLandmarks || archetypeLandmarks.length === 0 || !canvasRef.current) { // TODO: temp fix for no close camera
             return;
         }
 
