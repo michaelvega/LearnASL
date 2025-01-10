@@ -89,7 +89,7 @@ function App() {
           <Route path="/landing" element={<Landing />} />
           <Route path="/introduction" element={<Introduction />} />
           <Route path="/learn/:exerciseID/:wordID" element={<Learn type={"learn"} />} />
-          <Route path="/practice/:exerciseID/:wordID" element={<Practice type={"practice"} />} />
+          <Route path="/practice/:exerciseID" element={<Practice type={"practice"} />} />
           <Route path="/dictionary/:wordID" element={<DictionaryLearn type={"learn"} />} />
           <Route path="/navigation" element={<Navigation />} />
           <Route path="/introduceYourself" element={<IntroduceYourself />} />

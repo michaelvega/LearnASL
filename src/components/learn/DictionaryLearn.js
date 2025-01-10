@@ -48,6 +48,7 @@ function DictionaryLearn() {
     const progressPercent = isSignComplete ? 100 : 0;
 
     const handleFrameChange = (newIndex) => {
+        console.log("HELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLO")
         setSelectedFrameIndex(newIndex);
     };
 
@@ -109,6 +110,7 @@ function DictionaryLearn() {
                                 onFrameChange={handleFrameChange}
                                 image={wordData.image}
                                 onSignComplete={(isCorrect) => setIsSignComplete(isCorrect)}
+                                mode={"dictionary"} // dictionary so no subframe url
                             />
                         )}
 

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
-import "./Learn.css"; // or your existing CSS
+import "./Learn.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Progress } from "antd";
 
@@ -12,139 +12,134 @@ function Practice() {
     const { exerciseID } = useParams();
     const navigate = useNavigate();
 
-    // =========================
-    // 1) HOOKS (Top-Level Only)
-    // =========================
+    // We'll store the final combined .txt as a blob URL
+    const [combinedSubFrameURL, setCombinedSubFrameURL] = useState(null);
 
-    // Store the "exercise" object here once we find it
-    const [exercise, setExercise] = useState(null);
+    // Store the exercise name for the heading
+    const [exerciseName, setExerciseName] = useState("");
 
-    // Full array of subframes (flattened across all words)
-    const [allSubFrames, setAllSubFrames] = useState([]);
+    // For our progress bar
+    const [progressPercent, setProgressPercent] = useState(0);
 
-    // Index of the current subframe
-    const [currentSubFrameIndex, setCurrentSubFrameIndex] = useState(0);
+    // The index that the child is showing
+    const [childFrameIndex, setChildFrameIndex] = useState(0);
 
-    // Whether user completed the current subframe
-    const [isSignComplete, setIsSignComplete] = useState(false);
+    // How many total sub-frames are in this combined file
+    const [totalSubFrames, setTotalSubFrames] = useState(0);
 
-    // =========================
-    // 2) LOAD EXERCISE
-    // =========================
+    // We no longer store “completedCount” in a state that increments multiple times.
+    // Instead, we store which frames are “completed,” so we can do set logic.
+    const completedFramesRef = useRef(new Set());
 
     useEffect(() => {
-        // Find the matching exercise from your global ExerciseList
+        // 1) Find the exercise from our global ExerciseList
         const foundExercise = ExerciseList.find(
             (item) => item.id === parseInt(exerciseID)
         );
-        // If not found, we'll store null
-        setExercise(foundExercise ?? null);
+        if (!foundExercise) {
+            console.error("Exercise not found for ID:", exerciseID);
+            return;
+        }
+        setExerciseName(foundExercise.name || "Practice Exercise");
+
+        // 2) Build one big text file with all sub-frames from these wordIDs
+        const wordIDs = foundExercise.numpyFrames || [];
+        if (!wordIDs.length) {
+            console.warn("No word IDs found in this exercise.");
+            return;
+        }
+
+        combineAllWordFrames(wordIDs)
+            .then(({ objectURL, totalSubFrames }) => {
+                setCombinedSubFrameURL(objectURL);
+                setTotalSubFrames(totalSubFrames);
+                setProgressPercent(0);
+            })
+            .catch((err) => {
+                console.error("Error combining frames:", err);
+            });
     }, [exerciseID]);
 
-    // =========================
-    // 3) BUILD SUBFRAMES
-    // =========================
-
-    useEffect(() => {
-        // If there's no valid exercise yet, do nothing
-        if (!exercise) return;
-
-        const frames = exercise.numpyFrames || [];
-        const combinedSubFrames = [];
-
-        // For each "wordID" in the exercise
-        frames.forEach((wid) => {
-            const wordData = WordList.find((w) => w.id === wid);
-            if (!wordData || !wordData.numpyFrames) return;
-
-            // For each sub-frame in that word
-            wordData.numpyFrames.forEach((subFrameURL) => {
-                combinedSubFrames.push({
-                    wordID: wid,
-                    subFrameURL,
-                    noHands: wordData.noHands || 1,
-                    name: wordData.name, // so we can show "Sign X" in the UI
-                });
-            });
-        });
-
-        setAllSubFrames(combinedSubFrames);
-    }, [exercise]);
-
-    // =========================
-    // 4) EARLY RETURNS (No Hooks!)
-    // =========================
-
-    // If we haven't loaded (or found) the exercise yet
-    // We do NOT call any hooks, just a normal return:
-    if (exercise === null) {
-        return <div>Loading... (Or exercise not found)</div>;
+    /**
+     * Called by HandTracking when the user navigates to a new sub-frame
+     * (e.g. next sub-frame).
+     */
+    function handleFrameChange(newIndex) {
+        setChildFrameIndex(newIndex);
     }
 
-    // If we loaded the exercise but subframes are empty
-    if (!allSubFrames.length) {
-        return <div>No subframes found for this exercise.</div>;
-    }
-
-    // =========================
-    // 5) SAFE INDEX & PROGRESS
-    // =========================
-
-    // Clamp the current index so we never go out of range
-    const totalSubFrames = allSubFrames.length;
-    const safeIndex = Math.min(currentSubFrameIndex, totalSubFrames - 1);
-
-    // For a progress bar, we consider how many subframes are "behind" the current one
-    // You could do (safeIndex / totalSubFrames)*100 for partial progress
-    const progressPercent = (safeIndex / totalSubFrames) * 100;
-
-    // Destructure the subframe data we want to display
-    const { wordID, subFrameURL, noHands, name } = allSubFrames[safeIndex];
-
-    // =========================
-    // 6) HANDLERS
-    // =========================
-
-    // Called when the user completes the sign
-    function handleSignComplete(isCorrect) {
-        if (!isCorrect) return;
-        setIsSignComplete(true);
-
-        // Wait 2 seconds, then move to next
-        setTimeout(() => {
-            setIsSignComplete(false);
-
-            if (safeIndex < totalSubFrames - 1) {
-                // Move to the next subframe
-                setCurrentSubFrameIndex((prev) => prev + 1);
-            } else {
-                // Done with all subframes
-                console.log("Practice completed!");
-                navigate("/navigation");
-            }
-        }, 1000);
-    }
-
-    // Optional manual "Back" button
-    function handleBack() {
-        if (safeIndex > 0) {
-            setCurrentSubFrameIndex((prev) => prev - 1);
+    /**
+     * Called by HandTracking exactly once each time a sub-frame is recognized as correct.
+     * But if the user is holding the correct shape for multiple frames, that function
+     * might get called repeatedly for the same sub-frame — so we must GATE here.
+     */
+    function handleFrameSuccess(frameIndex) {
+        // If we've already marked sub-frame `frameIndex` as done, skip
+        if (completedFramesRef.current.has(frameIndex)) {
+            return;
         }
+
+        // Otherwise, add it to the completed set
+        completedFramesRef.current.add(frameIndex);
+
+        // Recompute progress: (# completed / total) * 100
+        const completedCount = completedFramesRef.current.size;
+        const percent = (completedCount / totalSubFrames) * 100;
+        setProgressPercent(percent);
     }
 
-    // Optional skip
-    function handleSkip() {
-        if (safeIndex < totalSubFrames - 1) {
-            setCurrentSubFrameIndex((prev) => prev + 1);
-        } else {
+    /**
+     * Called when the user has successfully completed *all* frames (or forcibly done).
+     */
+    function handleSignComplete(isCorrect) {
+        if (isCorrect) {
+            console.log("All frames recognized / completed successfully!");
+            // You can navigate away or do other logic here
             navigate("/navigation");
         }
     }
 
-    // =========================
-    // 7) RENDER
-    // =========================
+    /**
+     * Helper function: merges all sub-frames from each word ID
+     * into one big text file separated by "====SUBFRAME===="
+     */
+    async function combineAllWordFrames(wordIDs) {
+        const allTextParts = [];
+        let totalSubFrames = 0;
 
+        for (const wid of wordIDs) {
+            const wordData = WordList.find((w) => w.id === wid);
+            if (!wordData || !wordData.numpyFrames) continue;
+
+            for (const subFrameURL of wordData.numpyFrames) {
+                const resp = await fetch(subFrameURL);
+                const subFrameText = await resp.text();
+
+                allTextParts.push(subFrameText.trim());
+                allTextParts.push("====SUBFRAME====");
+                totalSubFrames++;
+            }
+        }
+
+        // Build final text
+        const combinedText = allTextParts.join("\n");
+        console.log("Combined all sub-frames:\n", combinedText);
+
+        const blob = new Blob([combinedText], { type: "text/plain" });
+        const objectURL = URL.createObjectURL(blob);
+        return { objectURL, totalSubFrames };
+    }
+
+    // If not loaded yet, show a simple message
+    if (!combinedSubFrameURL) {
+        return (
+            <div className="wrapperLearn">
+                <h2>Loading all multi-hand frames...</h2>
+            </div>
+        );
+    }
+
+    // Render
     return (
         <div className="wrapperLearn">
             <div className="verticalWrapperLearn">
@@ -168,47 +163,31 @@ function Practice() {
 
                 <h1>Practice Mode</h1>
 
-                {/* Show which sign name we are on */}
                 <h2 style={{ textAlign: 'center' }}>
-                    Now practicing: <strong>{name}</strong>
+                    Signing: <strong>{exerciseName}</strong>,
+                    Frame {childFrameIndex + 1} of {totalSubFrames}
                 </h2>
 
                 <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
-                    Subframe {safeIndex + 1} of {totalSubFrames}
+                    We've merged all sub-frames (including multi-hand) into one file.
                 </p>
 
                 <div className="learnContentWrapper" style={{ marginBottom: '2rem' }}>
                     <HandTracking
-                        // If your existing HandTracking expects wordID + selectedFrameIndex,
-                        // you might adapt this to feed the subFrameURL. But we'll keep it simple:
-                        selectedFrameIndex={0}
+                        // The child does the actual sign detection
+                        // It calls onFrameSuccess(frameIndex) once per recognized sub-frame
+                        // But we GATE here so we only increment once
+                        selectedFrameIndex={childFrameIndex}
                         mode="practice"
-                        subFrameURL={subFrameURL}
-                        onFrameChange={() => {}}
-                        practiceIndex={safeIndex}           // e.g. currentSubFrameIndex
-                        practiceTotal={allSubFrames.length} // total subframes
+                        subFrameURL={combinedSubFrameURL}
+                        onFrameChange={handleFrameChange}
                         onSignComplete={handleSignComplete}
+                        onFrameSuccess={handleFrameSuccess}
                     />
                 </div>
 
-                {/* Optional controls */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '300px', margin: '0 auto' }}>
-                    <Button
-                        className="bigGreenButton"
-                        type="primary"
-                        onClick={handleBack}
-                        disabled={safeIndex === 0}
-                    >
-                        Back
-                    </Button>
-                    <Button
-                        className="bigGreenButton"
-                        type="primary"
-                        onClick={handleSkip}
-                    >
-                        Skip
-                    </Button>
-                </div>
+                {/* No skipping or next/back buttons, because
+                    we let the child auto-advance. */}
             </div>
         </div>
     );

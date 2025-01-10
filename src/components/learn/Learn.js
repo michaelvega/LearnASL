@@ -23,7 +23,7 @@ const twoColors = {
 
 
 
-function Learn( {type} ) {
+function Learn() {
 
     const { exerciseID, wordID } = useParams(); // Get exerciseID and wordID from the URL
     const navigate = useNavigate();
@@ -132,15 +132,15 @@ function Learn( {type} ) {
                     />
                 </div>
 
-                <h1>Learn Mode</h1>
+                <h1>Learn!</h1>
                 <div className="learnContentWrapper">
                     <div className="componentContainerLearn">
                         <div>
-                        {currentIndex === 0 ? (
-                            <Tutorial wordID={wordID} /> // Pass wordID as a prop to Tutorial
-                        ) : (
-                            <HandTracking key={wordID} wordID={wordID} selectedFrameIndex={selectedFrameIndex} onFrameChange={handleFrameChange} image={image} onSignComplete={(isCorrect) => setIsSignComplete(isCorrect)} mode={type}   /> // Pass wordID as a prop to HandTracking
-                        )}
+                            {currentIndex === 0 ? (
+                                <Tutorial wordID={wordID} /> // Pass wordID as a prop to Tutorial
+                            ) : (
+                                <HandTracking key={wordID} wordID={wordID} selectedFrameIndex={selectedFrameIndex} onFrameChange={handleFrameChange} image={image} onSignComplete={(isCorrect) => setIsSignComplete(isCorrect)} mode={"learn"}   /> // Pass wordID as a prop to HandTracking, no subframeURL
+                            )}
                         </div>
 
                         {components[currentIndex].label === "Hand Tracking" && <img className = "exampleImg" src = {image} alt={`Example Image of ${wordData.name}`}></img>}
