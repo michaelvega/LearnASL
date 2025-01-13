@@ -75,6 +75,37 @@ import numpyY1 from "../../assets/numpyarrays/Y1.txt";
 import nametwoHands2 from "../../assets/numpyarrays/outputtwohandsName2.txt"
 import nametwoHands3 from "../../assets/numpyarrays/outputtwohandsName3.txt"
 
+import unmarkedask1 from "../../assets/tutorials/unmarkedask1.png";
+import numpyAsk1 from "../../assets/numpyarrays/ask1.txt";
+import numpyAsk2 from "../../assets/numpyarrays/ask2.txt";
+
+import unmarkedboy1 from "../../assets/tutorials/unmarkedboy1.png";
+import numpyBoy1 from "../../assets/numpyarrays/boy1.txt";
+import numpyBoy2 from "../../assets/numpyarrays/boy2.txt";
+import numpyBoy3 from "../../assets/numpyarrays/boy3.txt";
+import numpyBoy4 from "../../assets/numpyarrays/boy4.txt";
+
+import unmarkedbuy1 from "../../assets/tutorials/unmarkedbuy1.png";
+import numpyBuy1 from "../../assets/numpyarrays/buy1.txt";
+import numpyBuy2 from "../../assets/numpyarrays/buy2.txt";
+
+import unmarkedcome1 from "../../assets/tutorials/unmarkedcome1.png";
+import numpyCome1 from "../../assets/numpyarrays/come1.txt";
+import numpyCome2 from "../../assets/numpyarrays/come2.txt";
+
+import unmarkeddeaf1 from "../../assets/tutorials/unmarkeddeaf1.png";
+import numpyDeaf1 from "../../assets/numpyarrays/deaf1.txt";
+import numpyDeaf2 from "../../assets/numpyarrays/deaf2.txt";
+
+import unmarkedeat1 from "../../assets/tutorials/unmarkedeat1.png";
+import numpyEat1 from "../../assets/numpyarrays/eat1.txt";
+import numpyEat2 from "../../assets/numpyarrays/eat2.txt";
+import numpyEat3 from "../../assets/numpyarrays/eat3.txt";
+import numpyEat4 from "../../assets/numpyarrays/eat4.txt";
+
+import unmarkedfamily1 from "../../assets/tutorials/unmarkedfamily1.png";
+import numpyFamily1 from "../../assets/numpyarrays/family1.txt";
+import numpyFamily2 from "../../assets/numpyarrays/family2.txt";
 
 // easy = 0.1, default = 0.19, hard = 0.30
 // default maxRSME = 0.5
@@ -362,6 +393,71 @@ const WordList = [
         noHands: 1,
         correctrmseThreshold: 0.19
     },
+    {
+        id: 29,
+        title: "The Word Ask",
+        name:"Ask",
+        instructions: "TBD",
+        image: unmarkedask1,
+        numpyFrames: [numpyAsk1, numpyAsk2],
+        correctrmseThreshold: 0.3
+    },
+    {
+        id: 30,
+        title: "The Word Boy",
+        name:"Boy",
+        instructions: "Form a 'C' shape at your forehead, moving it outward.",
+        image: unmarkedboy1,
+        numpyFrames: [numpyBoy1, numpyBoy2, numpyBoy3, numpyBoy4],
+        correctrmseThreshold: 0.3
+    },
+    {
+        id: 31,
+        title: "The Word Buy",
+        name:"Buy",
+        instructions: "Gesture handing over something with one hand.",
+        image: unmarkedbuy1,
+        numpyFrames: [numpyBuy1, numpyBuy2],
+        correctrmseThreshold: 0.3
+    },
+    {
+        id: 32,
+        title: "The Word Come",
+        name:"Come",
+        instructions: "Point with both hands, pulling them toward yourself.",
+        image: unmarkedcome1,
+        numpyFrames: [numpyCome1, numpyCome2],
+        correctrmseThreshold: 0.3
+    },
+    {
+        id: 33,
+        title: "The Word Deaf",
+        name:"Deaf",
+        instructions: "Touch your ear and then your mouth with your index finger.",
+        image: unmarkeddeaf1,
+        numpyFrames: [numpyDeaf1, numpyDeaf2],
+        correctrmseThreshold: 0.3
+    },
+    {
+        id: 34,
+        title: "The Word Eat",
+        name:"Eat",
+        instructions: "Tap your fingertips to your mouth in a repetitive motion.",
+        image: unmarkedeat1,
+        numpyFrames: [numpyEat1, numpyEat2, numpyEat3, numpyEat4],
+        correctrmseThreshold: 0.3
+    },
+    {
+        id: 35,
+        title: "The Word Family",
+        name:"Family",
+        instructions: "Form a circle with your hands, starting from your chest outward.",
+        image: unmarkedfamily1,
+        numpyFrames: [numpyFamily1, numpyFamily2],
+        correctrmseThreshold: 0.3
+    }
+
+
 ];
 
 
